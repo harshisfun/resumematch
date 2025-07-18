@@ -4,14 +4,14 @@ An AI-powered web application that analyzes candidate resumes against job descri
 
 ## Features
 
-- 🔐 **Google SSO Authentication** - Secure login with Google OAuth
-- 📄 **File Upload Support** - Upload DOCX and TXT resume files
-- 🤖 **AI-Powered Analysis** - Detailed compatibility analysis using OpenAI GPT-4
-- 📊 **Comprehensive Reports** - Skill matching, missing criteria, and improvement recommendations
-- 📤 **Export Functionality** - Export results as JSON or PDF
-- ⚡ **Rate Limiting** - 3 analyses per 24-hour period per user
-- 👑 **Admin Dashboard** - Manage rate limits and whitelist users
-- 🎨 **Modern UI** - Beautiful, responsive design with Tailwind CSS
+- 🔐 Google SSO Authentication - Secure login with Google OAuth
+- 📄 File Upload Support - Upload DOCX and TXT resume files
+- 🤖 AI-Powered Analysis - Detailed compatibility analysis using OpenAI GPT-4
+- 📊 Comprehensive Reports - Skill matching, missing criteria, and improvement recommendations
+- 📤 Export Functionality - Export results as JSON or PDF
+- ⚡  Rate Limiting - 3 analyses per 24-hour period per user
+- 👑 Admin Dashboard - Manage rate limits and whitelist users
+- 🎨 Modern UI - Beautiful, responsive design with Tailwind CSS
 
 ## Tech Stack
 
