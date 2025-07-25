@@ -224,9 +224,37 @@ interface AnalysisResult {
   };
 }
 
-function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBack: () => void }) {
-  const matchScore = analysis["Match Score"];
+function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => void }) {
+  // Debug the analysis structure
+  console.log("Analysis object:", analysis);
+  console.log("Analysis keys:", Object.keys(analysis));
+  
+  // Try different possible property names for match score
+  const matchScore = analysis["Match Score"] || 
+                    analysis["matchScore"] || 
+                    analysis["overall_score"] || 
+                    analysis["score"] || 
+                    0;
+  
   const [isExporting, setIsExporting] = useState(false);
+  
+  // If no valid analysis data, show error
+  if (!analysis || typeof analysis !== 'object') {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">No Analysis Data</h2>
+          <p className="text-gray-400 mb-6">Unable to display analysis results.</p>
+          <button
+            onClick={onBack}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
+          >
+            ← Back to Upload
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const exportToJSON = () => {
     const dataStr = JSON.stringify(analysis, null, 2);
@@ -496,6 +524,22 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Debug Data Display */}
+        <div className="bg-red-900/20 border border-red-700 rounded-lg p-4 mb-8">
+          <h3 className="text-red-400 font-bold mb-2">🔍 Debug Info</h3>
+          <div className="text-xs text-gray-300 space-y-1">
+            <div>Available Keys: {Object.keys(analysis).join(", ")}</div>
+            <div>Match Score Found: {String(matchScore)}</div>
+            <div>Analysis Type: {typeof analysis}</div>
+          </div>
+          <details className="mt-4">
+            <summary className="cursor-pointer text-red-400">View Raw Analysis Data</summary>
+            <pre className="text-xs text-gray-300 overflow-auto max-h-96 mt-2 bg-gray-800 p-2 rounded">
+              {JSON.stringify(analysis, null, 2)}
+            </pre>
+          </details>
+        </div>
+
         {/* Overall Score */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold mb-4">Analysis Results</h2>
