@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import mammoth from 'mammoth';
+import { extractTextWithMistralOCR, isMistralOCRAvailable } from '@/lib/mistralOCR';
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,9 +47,36 @@ export async function POST(request: NextRequest) {
       switch (file.type) {
         case 'application/pdf':
           console.log('Processing PDF file');
-          return NextResponse.json({ 
-            error: 'PDF processing is temporarily unavailable. Please convert your PDF to DOCX or TXT format using Google Docs, Microsoft Word, or any online converter, then try again.' 
-          }, { status: 400 });
+          
+          // Check if Mistral OCR is available
+          if (await isMistralOCRAvailable()) {
+            try {
+              console.log('Using Mistral OCR for PDF processing');
+              const result = await extractTextWithMistralOCR(file);
+              
+              return NextResponse.json({ 
+                text: result.text,
+                fileName: file.name,
+                fileSize: file.size,
+                fileType: file.type,
+                ocrInfo: {
+                  confidence: result.confidence,
+                  pageCount: result.pageCount,
+                  hasImages: result.hasImages,
+                  processingMethod: 'Mistral OCR'
+                }
+              });
+            } catch (ocrError) {
+              console.error('Mistral OCR failed:', ocrError);
+              return NextResponse.json({ 
+                error: ocrError instanceof Error ? ocrError.message : 'Failed to process PDF with AI OCR'
+              }, { status: 400 });
+            }
+          } else {
+            return NextResponse.json({ 
+              error: 'PDF processing requires AI OCR configuration. Please convert your PDF to DOCX or TXT format using Google Docs, Microsoft Word, or any online converter, then try again.'
+            }, { status: 400 });
+          }
 
         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
           console.log('Processing DOCX file');
