@@ -114,57 +114,67 @@ Task: Analyze the resume against the job description and provide a comprehensive
 
 ### "Level 1 - Immediate Resume Optimization" (0-2 weeks implementation):
 * "Keyword Enhancement": 
-   * Missing keywords to add based on existing experience
-   * Technical terms to incorporate naturally
-   * Industry jargon alignment
+   * Exact missing keywords from JD to incorporate naturally
+   * Specific technical terms and tools to add based on existing experience
+   * Industry-specific language alignment with concrete examples
+   * ATS keyword density optimization suggestions
 * "Content Restructuring":
-   * Better presentation of existing achievements
-   * Quantification opportunities (add metrics, percentages, scale)
-   * Action verb improvements for experience bullets
-   * Skills section reorganization
+   * Transform existing bullets to "Action Verb + Task/Project + Quantified Outcome" format
+   * Identify achievements that lack metrics and suggest specific quantification
+   * Reorder bullet points by relevance and impact for this specific role
+   * Skills section reorganization by relevance to JD requirements
+   * Add missing context to existing experience (team size, budget, timeline)
 * "Format Optimization":
-   * Section reordering for maximum impact
-   * Highlighting relevant experience more prominently
-   * ATS optimization suggestions
+   * Optimal section order for this role (Experience vs Skills vs Projects)
+   * Specific resume sections to emphasize or de-emphasize
+   * Length optimization recommendations (expand/condense specific areas)
+   * ATS-friendly formatting improvements with specific suggestions
 
 ### "Level 2 - Market Positioning Strategy" (Immediate insight):
 * "Role Competitiveness Analysis":
-   * Estimated application pool size for this role/company
-   * Typical candidate profile for this position
-   * Success rate estimation based on current qualifications
-   * Timeline expectations for hiring process
+   * Market demand assessment for this role in current job market
+   * Typical candidate experience level and background for this position
+   * Application success probability based on current profile (with percentile ranking)
+   * Expected interview process complexity and timeline
+   * Salary range positioning based on experience level
 * "Competitive Standing":
-   * Strengths that differentiate from other candidates
-   * Common competitor profiles for this role
-   * Unique value propositions to emphasize
-   * Red flags that might concern recruiters
+   * Top 3 unique strengths that differentiate from typical candidates
+   * Most common candidate profiles competing for this role
+   * Specific achievements to highlight that others likely lack
+   * Potential concerns recruiters might have (with mitigation strategies)
+   * Industry experience advantage or disadvantage analysis
 * "Application Strategy":
-   * Best approach for this specific company/role
-   * Networking opportunities within the organization
-   * Interview preparation focus areas
-   * Timing recommendations for application
+   * Optimal application timing and approach for this company type
+   * Specific networking targets (roles, departments, alumni connections)
+   * Interview preparation roadmap with priority focus areas
+   * Cover letter strategy with key points to emphasize
+   * Follow-up strategy recommendations
 
 ### "Level 3 - Long-term Development Plan" (3-18 months implementation):
 * "Skills Development Roadmap":
-   * Priority skills to learn (with specific technologies/tools)
-   * Recommended learning resources (courses, books, platforms)
-   * Practical application opportunities (projects, open source)
-   * Timeline for skill acquisition (3/6/12 month milestones)
+   * Top 3 priority skills to learn with specific technologies/frameworks/tools
+   * Exact learning path: beginner → intermediate → advanced milestones
+   * Recommended platforms, courses, and resources with cost estimates
+   * Practical application projects to demonstrate competency
+   * 3-month, 6-month, and 12-month skill acquisition timeline
 * "Experience Enhancement":
-   * Specific project ideas to bridge experience gaps
-   * Volunteer/freelance opportunities in target domain
-   * Career move strategy (lateral moves, promotions)
-   * Side projects that demonstrate relevant skills
+   * Specific project types to pursue that align with target role requirements
+   * Open source contribution opportunities in relevant technologies
+   * Freelance/consulting projects that build portfolio credibility
+   * Internal projects or initiatives to lead at current company
+   * Career transition strategy (current role → bridge role → target role)
 * "Professional Development":
-   * Industry certifications with highest ROI
-   * Conference attendance and networking events
-   * Thought leadership opportunities (writing, speaking)
-   * Mentorship and advisory opportunities
+   * High-ROI certifications ranked by industry recognition and cost
+   * Key industry conferences and networking events with expected ROI
+   * Thought leadership opportunities (LinkedIn, Medium, podcasts) with topic suggestions
+   * Mentorship targets and how to approach them
+   * Professional associations and communities to join
 * "Educational Advancement":
-   * Degree programs if needed for role progression
-   * Specialized bootcamps or intensive programs
-   * Online course sequences with industry recognition
-   * Research or academic involvement opportunities
+   * Formal education gaps and most efficient ways to address them
+   * Bootcamp vs degree vs certification analysis for career goals
+   * Executive education programs for leadership development
+   * Online degree programs with industry partnerships
+   * Research opportunities that could accelerate career progression
 
 ## SUPPORTING ANALYSIS
 * "Skill Comparison Matrix":

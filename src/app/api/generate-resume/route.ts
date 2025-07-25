@@ -233,14 +233,39 @@ LaTeX Template Structure to Follow:
 
 \\end{document}
 
-Instructions:
-1. Replace [CANDIDATE_NAME] with the actual candidate name
-2. Replace [CONTACT_INFORMATION] with formatted contact details using \\mbox{} and \\AND separators
-3. Replace [RESUME_CONTENT] with properly structured sections (Education, Experience, Projects, Skills, etc.)
-4. For each experience bullet point, use the Action Verb + Task/Project + Outcome format
-5. Implement Level 1 keyword enhancements naturally within existing content
-6. Reorganize sections based on Level 1 format optimization suggestions
-7. Quantify achievements where the original resume provides data
+TRANSFORMATION INSTRUCTIONS:
+1. Replace [CANDIDATE_NAME] with the actual candidate name from input
+2. Replace [CONTACT_INFORMATION] with properly formatted contact details using \\mbox{} and \\AND separators
+3. Replace [RESUME_CONTENT] with optimized sections following this priority order:
+   - Professional Summary (if exists) - enhance with Level 1 keywords
+   - Experience (most important) - apply Action Verb + Task/Project + Outcome format
+   - Skills - reorganize based on Level 1 recommendations
+   - Education - maintain factual accuracy
+   - Projects/Certifications - if relevant to target role
+
+EXPERIENCE BULLET TRANSFORMATION RULES:
+For each experience bullet, follow this exact format:
+- START with a strong action verb (Led, Developed, Implemented, Optimized, etc.)
+- ADD the task/project context (what was built, managed, or improved)
+- END with quantified outcome/impact (metrics, percentages, business results)
+
+Examples of proper transformation:
+BEFORE: "Worked on various marketing campaigns"
+AFTER: "Led 5 digital marketing campaigns resulting in 40% increase in lead generation"
+
+BEFORE: "Responsible for database management"
+AFTER: "Optimized PostgreSQL database queries reducing response time by 60% for 10K+ daily users"
+
+KEYWORD INTEGRATION:
+- Naturally incorporate Level 1 keyword recommendations into existing experience
+- Ensure technical terms appear in appropriate context
+- Maintain readability while optimizing for ATS scanning
+
+QUALITY ASSURANCE:
+- NEVER add metrics, dates, or achievements not present in original resume
+- ONLY enhance presentation of existing facts
+- Preserve all chronological information exactly as provided
+- Maintain professional tone throughout
 
 Return ONLY the complete LaTeX code, ready to compile. Do not include any explanations or comments outside the LaTeX document.`;
 

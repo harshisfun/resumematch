@@ -680,35 +680,166 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
           </div>
         )}
 
-                {/* Enhanced Recommendations */}
-        <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-700 rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-6 text-blue-400">🚀 Enhanced Analysis Available</h3>
-          <div className="text-center">
-            <p className="text-gray-300 mb-4">
-              Your analysis now includes our new 3-level recommendation system with detailed insights on:
-            </p>
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-gray-800 rounded-lg p-4">
-                <div className="text-green-400 font-bold">Level 1</div>
-                <div className="text-sm text-gray-300">Immediate Resume Optimization</div>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-4">
-                <div className="text-blue-400 font-bold">Level 2</div>
-                <div className="text-sm text-gray-300">Market Positioning Strategy</div>
-              </div>
-              <div className="bg-gray-800 rounded-lg p-4">
-                <div className="text-purple-400 font-bold">Level 3</div>
-                <div className="text-sm text-gray-300">Long-term Development Plan</div>
-              </div>
+        {/* Level 1 - Immediate Resume Optimization */}
+        {analysis["Level 1 - Immediate Resume Optimization"] && (
+          <div className="bg-gradient-to-r from-green-900/20 to-emerald-900/20 border border-green-700 rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-semibold mb-6 text-green-400">
+              📋 Level 1 - Immediate Resume Optimization (0-2 weeks)
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {analysis["Level 1 - Immediate Resume Optimization"]["Keyword Enhancement"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-green-400 mb-3">🔍 Keyword Enhancement</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 1 - Immediate Resume Optimization"]["Keyword Enhancement"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 1 - Immediate Resume Optimization"]["Content Restructuring"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-green-400 mb-3">✏️ Content Restructuring</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 1 - Immediate Resume Optimization"]["Content Restructuring"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 1 - Immediate Resume Optimization"]["Format Optimization"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-green-400 mb-3">🎨 Format Optimization</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 1 - Immediate Resume Optimization"]["Format Optimization"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-              Get Professional Resume Rewrite - $29
-            </button>
-            <p className="text-xs text-gray-400 mt-2">
-              Includes Level 1 improvements in professional LaTeX format
-            </p>
+            <div className="mt-6 text-center">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+                Get Professional Resume Rewrite
+              </button>
+              <p className="text-xs text-gray-400 mt-2">
+                Implements all Level 1 improvements in professional LaTeX format
+              </p>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Level 2 - Market Positioning Strategy */}
+        {analysis["Level 2 - Market Positioning Strategy"] && (
+          <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 border border-blue-700 rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-semibold mb-6 text-blue-400">
+              🎯 Level 2 - Market Positioning Strategy
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {analysis["Level 2 - Market Positioning Strategy"]["Role Competitiveness Analysis"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-400 mb-3">📊 Competitiveness Analysis</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 2 - Market Positioning Strategy"]["Role Competitiveness Analysis"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 2 - Market Positioning Strategy"]["Competitive Standing"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-400 mb-3">🏆 Competitive Standing</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 2 - Market Positioning Strategy"]["Competitive Standing"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 2 - Market Positioning Strategy"]["Application Strategy"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-blue-400 mb-3">📋 Application Strategy</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 2 - Market Positioning Strategy"]["Application Strategy"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Level 3 - Long-term Development Plan */}
+        {analysis["Level 3 - Long-term Development Plan"] && (
+          <div className="bg-gradient-to-r from-purple-900/20 to-violet-900/20 border border-purple-700 rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-semibold mb-6 text-purple-400">
+              🚀 Level 3 - Long-term Development Plan (3-18 months)
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              {analysis["Level 3 - Long-term Development Plan"]["Skills Development Roadmap"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-purple-400 mb-3">🛠️ Skills Development</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 3 - Long-term Development Plan"]["Skills Development Roadmap"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 3 - Long-term Development Plan"]["Experience Enhancement"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-purple-400 mb-3">💼 Experience Enhancement</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 3 - Long-term Development Plan"]["Experience Enhancement"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 3 - Long-term Development Plan"]["Professional Development"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-purple-400 mb-3">🎓 Professional Development</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 3 - Long-term Development Plan"]["Professional Development"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {analysis["Level 3 - Long-term Development Plan"]["Educational Advancement"] && (
+                <div className="bg-gray-800 rounded-lg p-4">
+                  <h4 className="font-medium text-purple-400 mb-3">📚 Educational Advancement</h4>
+                  <div className="text-sm text-gray-300 space-y-2">
+                    {Object.entries(analysis["Level 3 - Long-term Development Plan"]["Educational Advancement"]).map(([key, value]) => (
+                      <div key={key}>
+                        <span className="font-medium">{key}:</span> {String(value)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
