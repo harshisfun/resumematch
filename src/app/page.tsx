@@ -537,57 +537,61 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
         </div>
 
         {/* Detailed Breakdown */}
-        <div className="grid md:grid-cols-2 gap-8 mb-8">
-          {/* Skill Match */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">Skill Match</h3>
-            <div className="space-y-4">
-              {Object.entries(analysis["Score Breakdown"]["Skill Match"]).map(([skillType, data]) => (
-                <div key={skillType} className="border-b border-gray-700 pb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{skillType}</span>
-                    <span className="text-sm text-gray-400">{data.Match}</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div
-                      className="bg-blue-500 h-2 rounded-full"
-                      style={{ width: `${data.Match}%` }}
-                    ></div>
-                  </div>
-                  {data["Matched Skills"] && data["Matched Skills"] !== "None" && (
-                    <div className="mt-2 text-sm text-gray-300">
-                      <span className="font-medium">Matched:</span> {data["Matched Skills"]}
+        {analysis["Score Breakdown"] && (
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {/* Skill Match */}
+            {analysis["Score Breakdown"]["Skill Match"] && (
+              <div className="bg-gray-800 rounded-lg p-6">
+                <h3 className="text-xl font-semibold mb-4">Skill Match</h3>
+                <div className="space-y-4">
+                  {Object.entries(analysis["Score Breakdown"]["Skill Match"]).map(([skillType, data]) => (
+                    <div key={skillType} className="border-b border-gray-700 pb-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium">{skillType}</span>
+                        <span className="text-sm text-gray-400">{data.Match || 0}</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-blue-500 h-2 rounded-full"
+                          style={{ width: `${data.Match || 0}%` }}
+                        ></div>
+                      </div>
+                      {data["Matched Skills"] && data["Matched Skills"] !== "None" && (
+                        <div className="mt-2 text-sm text-gray-300">
+                          <span className="font-medium">Matched:</span> {data["Matched Skills"]}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            )}
 
-          {/* Other Metrics */}
-          <div className="bg-gray-800 rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-4">Other Metrics</h3>
-            <div className="space-y-4">
-              {Object.entries(analysis["Score Breakdown"]).filter(([key]) => key !== "Skill Match").map(([metric, data]) => {
-                const score = 'Score' in data ? data.Score : 0;
-                return (
-                  <div key={metric} className="border-b border-gray-700 pb-4">
-                                      <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{metric}</span>
-                    <span className="text-sm text-gray-400">{score}</span>
-                  </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div
-                        className="bg-green-500 h-2 rounded-full"
-                        style={{ width: `${score}%` }}
-                      ></div>
+            {/* Other Metrics */}
+            <div className="bg-gray-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4">Other Metrics</h3>
+              <div className="space-y-4">
+                {Object.entries(analysis["Score Breakdown"]).filter(([key]) => key !== "Skill Match").map(([metric, data]) => {
+                  const score = 'Score' in data ? data.Score : 0;
+                  return (
+                    <div key={metric} className="border-b border-gray-700 pb-4">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="font-medium">{metric}</span>
+                        <span className="text-sm text-gray-400">{score}</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-2">
+                        <div
+                          className="bg-green-500 h-2 rounded-full"
+                          style={{ width: `${score}%` }}
+                        ></div>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Missing Criteria */}
         {analysis["Missing Criteria"] && (
@@ -620,50 +624,61 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
         )}
 
         {/* Skill Comparison Table */}
-        <div className="bg-gray-800 rounded-lg p-6 mb-8">
-          <h3 className="text-xl font-semibold mb-4">Skill Comparison</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <h4 className="font-medium text-red-400 mb-2">Required Skills</h4>
-              <div className="space-y-1">
-                {Array.isArray(analysis["Overall Skill Comparison Table"]["Required Skill"])
-                  ? analysis["Overall Skill Comparison Table"]["Required Skill"].map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                  : analysis["Overall Skill Comparison Table"]["Required Skill"].split(", ").map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                }
+        {analysis["Overall Skill Comparison Table"] && (
+          <div className="bg-gray-800 rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-semibold mb-4">Skill Comparison</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div>
+                <h4 className="font-medium text-red-400 mb-2">Required Skills</h4>
+                <div className="space-y-1">
+                  {analysis["Overall Skill Comparison Table"]["Required Skill"] ? (
+                    Array.isArray(analysis["Overall Skill Comparison Table"]["Required Skill"])
+                      ? analysis["Overall Skill Comparison Table"]["Required Skill"].map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                      : analysis["Overall Skill Comparison Table"]["Required Skill"].split(", ").map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                  ) : (
+                    <div className="text-sm text-gray-500">No data available</div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div>
-              <h4 className="font-medium text-green-400 mb-2">Present in Resume</h4>
-              <div className="space-y-1">
-                {Array.isArray(analysis["Overall Skill Comparison Table"]["Present in Resume"])
-                  ? analysis["Overall Skill Comparison Table"]["Present in Resume"].map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                  : analysis["Overall Skill Comparison Table"]["Present in Resume"].split(", ").map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                }
+              <div>
+                <h4 className="font-medium text-green-400 mb-2">Present in Resume</h4>
+                <div className="space-y-1">
+                  {analysis["Overall Skill Comparison Table"]["Present in Resume"] ? (
+                    Array.isArray(analysis["Overall Skill Comparison Table"]["Present in Resume"])
+                      ? analysis["Overall Skill Comparison Table"]["Present in Resume"].map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                      : analysis["Overall Skill Comparison Table"]["Present in Resume"].split(", ").map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                  ) : (
+                    <div className="text-sm text-gray-500">No data available</div>
+                  )}
+                </div>
               </div>
-            </div>
-            <div>
-              <h4 className="font-medium text-yellow-400 mb-2">Absent in Resume</h4>
-              <div className="space-y-1">
-                {Array.isArray(analysis["Overall Skill Comparison Table"]["Absent in Resume"])
-                  ? analysis["Overall Skill Comparison Table"]["Absent in Resume"].map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                  : analysis["Overall Skill Comparison Table"]["Absent in Resume"].split(", ").map((skill, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {skill}</div>
-                    ))
-                }
+              <div>
+                <h4 className="font-medium text-yellow-400 mb-2">Absent in Resume</h4>
+                <div className="space-y-1">
+                  {analysis["Overall Skill Comparison Table"]["Absent in Resume"] ? (
+                    Array.isArray(analysis["Overall Skill Comparison Table"]["Absent in Resume"])
+                      ? analysis["Overall Skill Comparison Table"]["Absent in Resume"].map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                      : analysis["Overall Skill Comparison Table"]["Absent in Resume"].split(", ").map((skill, index) => (
+                          <div key={index} className="text-sm text-gray-300">• {skill}</div>
+                        ))
+                  ) : (
+                    <div className="text-sm text-gray-500">No data available</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
                 {/* Enhanced Recommendations */}
         <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-700 rounded-lg p-6">
