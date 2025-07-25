@@ -38,10 +38,9 @@ export async function extractTextWithMistralOCR(file: File): Promise<MistralOCRR
     
     console.log('File uploaded, ID:', uploadedFile.id);
     
-    // Get signed URL for processing
+    // Get signed URL for processing  
     const signedUrl = await client.files.getSignedUrl({
-      fileId: uploadedFile.id,
-      expiry: 3600 // 1 hour
+      fileId: uploadedFile.id
     });
     
     console.log('Processing document with Mistral OCR...');

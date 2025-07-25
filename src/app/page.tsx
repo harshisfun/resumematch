@@ -313,7 +313,9 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
               <ul>
                 ${Array.isArray(analysis["Missing Criteria"]) 
                   ? analysis["Missing Criteria"].map(criteria => `<li>${criteria}</li>`).join('')
-                  : analysis["Missing Criteria"].split(", ").map(criteria => `<li>${criteria}</li>`).join('')
+                  : typeof analysis["Missing Criteria"] === 'string'
+                    ? analysis["Missing Criteria"].split(", ").map(criteria => `<li>${criteria}</li>`).join('')
+                    : `<li>${String(analysis["Missing Criteria"])}</li>`
                 }
               </ul>
             </div>
@@ -579,12 +581,19 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
                       <span className="text-gray-300">{criteria}</span>
                     </div>
                   ))
-                : analysis["Missing Criteria"].split(", ").map((criteria, index) => (
-                    <div key={index} className="flex items-start space-x-2 mb-2">
-                      <span className="text-red-400 mt-1">•</span>
-                      <span className="text-gray-300">{criteria}</span>
-                    </div>
-                  ))
+                : typeof analysis["Missing Criteria"] === 'string'
+                  ? analysis["Missing Criteria"].split(", ").map((criteria, index) => (
+                      <div key={index} className="flex items-start space-x-2 mb-2">
+                        <span className="text-red-400 mt-1">•</span>
+                        <span className="text-gray-300">{criteria}</span>
+                      </div>
+                    ))
+                  : (
+                      <div className="flex items-start space-x-2 mb-2">
+                        <span className="text-red-400 mt-1">•</span>
+                        <span className="text-gray-300">{String(analysis["Missing Criteria"])}</span>
+                      </div>
+                    )
               }
             </div>
           </div>
