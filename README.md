@@ -16,7 +16,7 @@ Get up and running in 3 minutes:
 ## Features
 
 - 🔐 Google SSO Authentication - Secure login with Google OAuth
-- 📄 File Upload Support - Upload DOCX and TXT resume files
+- 📄 File Upload Support - Upload PDF, DOCX and TXT resume files (AI-powered OCR)
 - 🤖 AI-Powered Analysis - Detailed compatibility analysis using OpenAI GPT-4
 - 📊 Comprehensive Reports - Skill matching, missing criteria, and improvement recommendations
 - 📤 Export Functionality - Export results as JSON or PDF
@@ -48,7 +48,12 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 # OpenAI API
 OPENAI_API_KEY=your-openai-api-key
+
+# Mistral AI (for PDF OCR processing)
+MISTRAL_API_KEY=your-mistral-api-key
 ```
+
+**Note**: The `MISTRAL_API_KEY` is required for PDF processing. Without it, only DOCX and TXT files will be supported.
 
 ## Getting Started
 
@@ -143,7 +148,7 @@ OPENAI_API_KEY=your-openai-api-key
 
 - **DOCX**: Full support with text extraction
 - **TXT**: Full support
-- **PDF**: Coming soon (currently disabled)
+- **PDF**: ✅ Supported via Mistral OCR (AI-powered)
 
 ## API Endpoints
 

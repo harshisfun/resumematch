@@ -25,7 +25,7 @@ function FileUpload({ onFileSelect }: { onFileSelect: (file: File | null) => voi
       ];
       
       if (!allowedTypes.includes(file.type)) {
-        setError("Please upload a DOCX or TXT file. PDF support is coming soon!");
+        setError("Please upload a PDF, DOCX, or TXT file.");
         return;
       }
       
@@ -38,6 +38,7 @@ function FileUpload({ onFileSelect }: { onFileSelect: (file: File | null) => voi
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
+      'application/pdf': ['.pdf'],
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
       'text/plain': ['.txt']
     },
@@ -91,7 +92,7 @@ function FileUpload({ onFileSelect }: { onFileSelect: (file: File | null) => voi
               {isDragActive ? "Drop the file here" : "Drag & drop a file here, or click to select"}
             </p>
             <p className="mt-1 text-xs text-gray-500">
-              DOCX, TXT up to 10MB (PDF support coming soon)
+              PDF, DOCX, TXT up to 10MB (AI-powered OCR)
             </p>
           </div>
         )}
@@ -787,6 +788,13 @@ function Dashboard() {
       // Step 1: Extract text from the uploaded file
       const formData = new FormData();
       formData.append('file', selectedFile);
+      
+      // Show different message for PDFs
+      const isPDF = selectedFile.type === 'application/pdf';
+      if (isPDF) {
+        // You could add a toast notification here
+        console.log('Processing PDF with AI OCR...');
+      }
       
       const extractResponse = await fetch('/api/extract-text', {
         method: 'POST',
