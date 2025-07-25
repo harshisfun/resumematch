@@ -1,0 +1,33 @@
+# Code Owners for Job Fit AI Portal
+# These users will be automatically requested for review when files are changed
+
+# Global fallback - owner of the repository
+* @harshisfun
+
+# API routes require careful review for security and functionality
+/src/app/api/ @harshisfun
+
+# Authentication and security-related files
+/src/lib/auth.ts @harshisfun
+/src/lib/rateLimit.ts @harshisfun
+
+# Infrastructure and deployment files
+/.github/ @harshisfun
+/scripts/ @harshisfun
+/DEPLOYMENT*.md @harshisfun
+/SECURITY.md @harshisfun
+
+# Configuration files
+/package.json @harshisfun
+/tsconfig.json @harshisfun
+/next.config.ts @harshisfun
+/eslint.config.mjs @harshisfun
+
+# Environment and data files
+/.env* @harshisfun
+/data/ @harshisfun
+
+# Documentation
+/README.md @harshisfun
+/CONTRIBUTING.md @harshisfun
+/CHANGELOG.md @harshisfun 
