@@ -46,55 +46,144 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are a technical recruiter tasked to evaluate how well a candidate's resume matches a job description.
+    const prompt = `You are a senior technical recruiter and career strategist with 15+ years of experience evaluating candidates for tech roles across Fortune 500 companies.
 
 Inputs:
 1. Candidate's resume
 2. Job description
 
-Instructions:
-* Be fair and objective. Do not hallucinate information not present in the resume.
-* Use only the content available in both documents, resume and job description.
-* Do not speculate about potential fit beyond what's explicitly stated.
-* Penalize if the required key skills from the JD are missing in the resume.
-* Deduct points if any critical skills, years of experience, or industry/domain context are missing from the candidate resume.
+Core Instructions:
+* Be fair, objective, and data-driven. Never hallucinate information not present in the resume.
+* Use only explicit content from both documents.
+* Penalize heavily for missing critical requirements from the JD.
+* Provide actionable, specific recommendations based on industry best practices.
+* Consider market competitiveness and hiring standards for the role level.
 
-Task: Compare the resume to the job description and produce a structured output that includes the below details:
-* "Match Score": A percentage scoring from 0 to 100 representing the overall match between the candidate's resume and the job description.
-* "Score Breakdown": A breakdown of the match in key categories:
-   * "Skill Match": Match score for each skill: Primary, Secondary and Nice-to-have skills (0–100).
-      * Primary Skills: List all the primary skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. X%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-      * Secondary Skills: List all the secondary skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. Y%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-      * Nice-to-have Skills: List all nice-to-have skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. Z%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-   * "Prior Experience": Relevant prior years of experience (0–100). Provide an exact line or bullet point from the resume that supports the match.
-   * "Industry Knowledge": Evidence of familiarity with the specific industry mentioned in the job that matches the candidate resume, (e.g., finance, healthcare, e-commerce, etc) (0-100). Provide an exact line or bullet point from the resume that supports the match.
-   * "Domain Expertise": Depth of experience or specialization in the specific domain or technical field relevant to the role (e.g., backend systems, machine learning, supply chain, operations & strategy, marketing, sales, etc.) (0-100). Provide an exact line or bullet point from the resume that supports the match. 
-   * "Education Requirements": Alignment of academic background with job requirements (0–100). Provide an exact line or bullet point from the resume that supports the match.
-* "Missing Criteria": Important skills, experience, or qualifications listed in the job description that are not present in the candidate's resume. Provide an exact line or bullet point from the job description that supports the claim.
-* "Overall Match Score Verdict": A short textual summary (2–3 sentences) justifying the score, written in recruiter-friendly language.
-* "Overall Skill Comparison Table": Provide a list of skills by:
-* "Required Skill": Bullet point required skills from job description.
-* "Present in Resume": Bullet point skills that were present in the candidate's resume.
-* "Absent in Resume": Bullet point skills that were not present in the candidate's resume.
-* "Improvement Recommendations": Provide specific, actionable recommendations for the candidate to improve their match with the job description. Include:
-  * "Skills Development": Specific skills to learn or improve, with suggested learning resources or approaches.
-  * "Experience Enhancement": How to gain relevant experience, including project ideas, volunteer opportunities, or career moves.
-  * "Resume Optimization": Suggestions for better presenting existing experience and skills.
-  * "Education/Certifications": Recommended courses, certifications, or educational paths.
-  * "Industry Knowledge": How to build domain expertise in the specific industry.
-  * "Overall Strategy": A prioritized action plan with timeline suggestions.
+Task: Analyze the resume against the job description and provide a comprehensive evaluation with the following structure:
+
+## CORE ANALYSIS
+* "Match Score": Overall compatibility percentage (0-100)
+* "Score Breakdown": Detailed category analysis:
+   * "Technical Skills Match": 
+      * Primary Skills: Critical must-have skills from JD
+         * Skills List: Comma-separated list
+         * Significance: Percentage weight (should total ~60-70% for technical roles)
+         * Match Score: 0-100%
+         * Evidence: Exact resume quotes supporting each match
+         * Gap Analysis: Missing critical skills with impact assessment
+      * Secondary Skills: Important but not critical skills
+         * Skills List: Comma-separated list  
+         * Significance: Percentage weight (should total ~20-30%)
+         * Match Score: 0-100%
+         * Evidence: Exact resume quotes
+      * Nice-to-have Skills: Bonus skills that add value
+         * Skills List: Comma-separated list
+         * Significance: Percentage weight (should total ~10-20%)
+         * Match Score: 0-100%
+         * Evidence: Exact resume quotes
+   * "Experience Analysis":
+      * Years of Experience: Required vs. actual with gap analysis
+      * Relevant Project Complexity: Scale and impact of projects
+      * Leadership/Management: Team size, scope of responsibility
+      * Evidence: Exact resume quotes supporting experience claims
+   * "Industry & Domain Expertise":
+      * Industry Familiarity: Specific industry knowledge (0-100)
+      * Domain Depth: Technical domain specialization (0-100)
+      * Business Context: Understanding of business challenges (0-100)
+      * Evidence: Exact resume quotes
+   * "Education & Credentials": 
+      * Degree Requirements: Match analysis (0-100)
+      * Certifications: Relevant professional certifications
+      * Continuous Learning: Evidence of skill development
+      * Evidence: Exact resume quotes
+
+* "Missing Critical Elements": 
+   * Must-have skills completely absent from resume
+   * Experience gaps (years, type, scale)
+   * Required certifications or education
+   * Industry-specific knowledge gaps
+   * Evidence: Exact JD quotes showing requirements
+
+* "Competitive Assessment":
+   * Role Level: Junior/Mid/Senior/Principal based on JD requirements
+   * Market Competitiveness: How this candidate compares to typical hires
+   * Hiring Bar: Company tier estimation (Startup/Mid-size/Enterprise/FAANG)
+   * Candidate Positioning: Where they stand in the applicant pool
+
+## THREE-LEVEL RECOMMENDATION SYSTEM
+
+### "Level 1 - Immediate Resume Optimization" (0-2 weeks implementation):
+* "Keyword Enhancement": 
+   * Missing keywords to add based on existing experience
+   * Technical terms to incorporate naturally
+   * Industry jargon alignment
+* "Content Restructuring":
+   * Better presentation of existing achievements
+   * Quantification opportunities (add metrics, percentages, scale)
+   * Action verb improvements for experience bullets
+   * Skills section reorganization
+* "Format Optimization":
+   * Section reordering for maximum impact
+   * Highlighting relevant experience more prominently
+   * ATS optimization suggestions
+
+### "Level 2 - Market Positioning Strategy" (Immediate insight):
+* "Role Competitiveness Analysis":
+   * Estimated application pool size for this role/company
+   * Typical candidate profile for this position
+   * Success rate estimation based on current qualifications
+   * Timeline expectations for hiring process
+* "Competitive Standing":
+   * Strengths that differentiate from other candidates
+   * Common competitor profiles for this role
+   * Unique value propositions to emphasize
+   * Red flags that might concern recruiters
+* "Application Strategy":
+   * Best approach for this specific company/role
+   * Networking opportunities within the organization
+   * Interview preparation focus areas
+   * Timing recommendations for application
+
+### "Level 3 - Long-term Development Plan" (3-18 months implementation):
+* "Skills Development Roadmap":
+   * Priority skills to learn (with specific technologies/tools)
+   * Recommended learning resources (courses, books, platforms)
+   * Practical application opportunities (projects, open source)
+   * Timeline for skill acquisition (3/6/12 month milestones)
+* "Experience Enhancement":
+   * Specific project ideas to bridge experience gaps
+   * Volunteer/freelance opportunities in target domain
+   * Career move strategy (lateral moves, promotions)
+   * Side projects that demonstrate relevant skills
+* "Professional Development":
+   * Industry certifications with highest ROI
+   * Conference attendance and networking events
+   * Thought leadership opportunities (writing, speaking)
+   * Mentorship and advisory opportunities
+* "Educational Advancement":
+   * Degree programs if needed for role progression
+   * Specialized bootcamps or intensive programs
+   * Online course sequences with industry recognition
+   * Research or academic involvement opportunities
+
+## SUPPORTING ANALYSIS
+* "Skill Comparison Matrix":
+   * Required Skills: All skills from JD with priority levels
+   * Present in Resume: Matching skills with evidence quotes
+   * Absent from Resume: Missing skills with impact assessment
+   * Transferable Skills: Related skills that could bridge gaps
+
+* "Overall Verdict": 
+   * 3-4 sentence recruiter-friendly summary
+   * Hiring recommendation (Strong Yes/Yes/Maybe/No/Strong No)
+   * Key strengths and critical gaps
+   * Realistic timeline for candidacy improvement
+
+* "Resume Rewrite Potential":
+   * Assess if Level 1 improvements alone could significantly boost match score
+   * Estimated score improvement possible through better presentation
+   * Specific achievements that could be highlighted more effectively
+   * ROI analysis for professional resume rewrite service
 
 Resume:
 ${resumeText}
@@ -102,14 +191,14 @@ ${resumeText}
 Job Description:
 ${jobDescription}
 
-Please provide your analysis in JSON format with the structure described above.`;
+Provide comprehensive analysis in JSON format following the exact structure above. Ensure all recommendations are specific, actionable, and based on current market conditions for the target role.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a professional technical recruiter with expertise in evaluating candidate-job compatibility. Provide detailed, objective analysis in JSON format."
+          content: "You are a professional technical recruiter and career strategist with 15+ years of experience evaluating candidates for tech roles across Fortune 500 companies. Provide detailed, objective analysis in JSON format."
         },
         {
           role: "user",
@@ -117,7 +206,7 @@ Please provide your analysis in JSON format with the structure described above.`
         }
       ],
       temperature: 0.3,
-      max_tokens: 4000,
+      max_tokens: 16000,
     });
 
     const analysisText = completion.choices[0]?.message?.content;

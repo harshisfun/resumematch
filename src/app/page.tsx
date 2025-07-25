@@ -202,6 +202,26 @@ interface AnalysisResult {
     "Industry Knowledge": string[] | string;
     "Overall Strategy": string[] | string;
   };
+  "Level 1 - Immediate Resume Optimization"?: {
+    "Keyword Enhancement"?: { [key: string]: unknown };
+    "Content Restructuring"?: { [key: string]: unknown };
+    "Format Optimization"?: { [key: string]: unknown };
+  };
+  "Level 2 - Market Positioning Strategy"?: {
+    "Role Competitiveness Analysis"?: { [key: string]: unknown };
+    "Competitive Standing"?: { [key: string]: unknown };
+    "Application Strategy"?: { [key: string]: unknown };
+  };
+  "Level 3 - Long-term Development Plan"?: {
+    "Skills Development Roadmap"?: { [key: string]: unknown };
+    "Experience Enhancement"?: { [key: string]: unknown };
+    "Professional Development"?: { [key: string]: unknown };
+    "Educational Advancement"?: { [key: string]: unknown };
+  };
+  "Resume Rewrite Potential"?: {
+    "Estimated score improvement possible through better presentation"?: string;
+    [key: string]: unknown;
+  };
 }
 
 function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBack: () => void }) {
@@ -645,103 +665,35 @@ function ResultsDashboard({ analysis, onBack }: { analysis: AnalysisResult; onBa
           </div>
         </div>
 
-        {/* Improvement Recommendations */}
-        {analysis["Improvement Recommendations"] && (
-          <div className="bg-blue-900/20 border border-blue-700 rounded-lg p-6">
-            <h3 className="text-xl font-semibold mb-6 text-blue-400">💡 Improvement Recommendations</h3>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Skills Development */}
+                {/* Enhanced Recommendations */}
+        <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-700 rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-6 text-blue-400">🚀 Enhanced Analysis Available</h3>
+          <div className="text-center">
+            <p className="text-gray-300 mb-4">
+              Your analysis now includes our new 3-level recommendation system with detailed insights on:
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
               <div className="bg-gray-800 rounded-lg p-4">
-                <h4 className="font-medium text-blue-300 mb-3 flex items-center">
-                  <span className="mr-2">🎯</span>
-                  Skills Development
-                </h4>
-                <div className="space-y-2">
-                  {Array.isArray(analysis["Improvement Recommendations"]["Skills Development"])
-                    ? analysis["Improvement Recommendations"]["Skills Development"].map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                    : analysis["Improvement Recommendations"]["Skills Development"].split(". ").map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                  }
-                </div>
+                <div className="text-green-400 font-bold">Level 1</div>
+                <div className="text-sm text-gray-300">Immediate Resume Optimization</div>
               </div>
-
-              {/* Experience Enhancement */}
               <div className="bg-gray-800 rounded-lg p-4">
-                <h4 className="font-medium text-blue-300 mb-3 flex items-center">
-                  <span className="mr-2">🚀</span>
-                  Experience Enhancement
-                </h4>
-                <div className="space-y-2">
-                  {Array.isArray(analysis["Improvement Recommendations"]["Experience Enhancement"])
-                    ? analysis["Improvement Recommendations"]["Experience Enhancement"].map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                    : analysis["Improvement Recommendations"]["Experience Enhancement"].split(". ").map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                  }
-                </div>
+                <div className="text-blue-400 font-bold">Level 2</div>
+                <div className="text-sm text-gray-300">Market Positioning Strategy</div>
               </div>
-
-              {/* Resume Optimization */}
               <div className="bg-gray-800 rounded-lg p-4">
-                <h4 className="font-medium text-blue-300 mb-3 flex items-center">
-                  <span className="mr-2">📝</span>
-                  Resume Optimization
-                </h4>
-                <div className="space-y-2">
-                  {Array.isArray(analysis["Improvement Recommendations"]["Resume Optimization"])
-                    ? analysis["Improvement Recommendations"]["Resume Optimization"].map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                    : analysis["Improvement Recommendations"]["Resume Optimization"].split(". ").map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                  }
-                </div>
-              </div>
-
-              {/* Education/Certifications */}
-              <div className="bg-gray-800 rounded-lg p-4">
-                <h4 className="font-medium text-blue-300 mb-3 flex items-center">
-                  <span className="mr-2">🎓</span>
-                  Education/Certifications
-                </h4>
-                <div className="space-y-2">
-                  {Array.isArray(analysis["Improvement Recommendations"]["Education/Certifications"])
-                    ? analysis["Improvement Recommendations"]["Education/Certifications"].map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                    : analysis["Improvement Recommendations"]["Education/Certifications"].split(". ").map((rec, index) => (
-                        <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                      ))
-                  }
-                </div>
+                <div className="text-purple-400 font-bold">Level 3</div>
+                <div className="text-sm text-gray-300">Long-term Development Plan</div>
               </div>
             </div>
-
-            {/* Overall Strategy */}
-            <div className="mt-6 bg-gradient-to-r from-blue-900/30 to-purple-900/30 rounded-lg p-4">
-              <h4 className="font-medium text-blue-300 mb-3 flex items-center">
-                <span className="mr-2">📋</span>
-                Overall Strategy
-              </h4>
-              <div className="space-y-2">
-                {Array.isArray(analysis["Improvement Recommendations"]["Overall Strategy"])
-                  ? analysis["Improvement Recommendations"]["Overall Strategy"].map((rec, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                    ))
-                  : analysis["Improvement Recommendations"]["Overall Strategy"].split(". ").map((rec, index) => (
-                      <div key={index} className="text-sm text-gray-300">• {rec}</div>
-                    ))
-                }
-              </div>
-            </div>
+            <button className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+              Get Professional Resume Rewrite - $29
+            </button>
+            <p className="text-xs text-gray-400 mt-2">
+              Includes Level 1 improvements in professional LaTeX format
+            </p>
           </div>
-        )}
+        </div>
       </main>
     </div>
   );
