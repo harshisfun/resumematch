@@ -2,6 +2,17 @@
 
 An AI-powered web application that analyzes candidate resumes against job descriptions using OpenAI's GPT-4. Features include Google SSO authentication, file upload support (DOCX, TXT), detailed compatibility analysis, and export functionality.
 
+## 🚀 Quick Start
+
+Get up and running in 3 minutes:
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure environment variables (see below)
+4. Run: `npm run dev`
+
+🎯 **Perfect for recruiters, HR teams, and candidates looking to optimize their job applications!**
+
 ## Features
 
 - 🔐 Google SSO Authentication - Secure login with Google OAuth
