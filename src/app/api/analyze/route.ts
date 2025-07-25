@@ -191,7 +191,7 @@ ${resumeText}
 Job Description:
 ${jobDescription}
 
-Provide comprehensive analysis in JSON format following the exact structure above. Ensure all recommendations are specific, actionable, and based on current market conditions for the target role.`;
+CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all recommendations are specific, actionable, and based on current market conditions for the target role.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -220,13 +220,33 @@ Provide comprehensive analysis in JSON format following the exact structure abov
     // Try to parse the response as JSON
     let analysis;
     try {
-      analysis = JSON.parse(analysisText);
+      // Clean the response text - remove any markdown code blocks or extra text
+      let cleanedText = analysisText.trim();
+      
+      // Remove markdown code block syntax if present
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      // Find the first { and last } to extract just the JSON part
+      const firstBrace = cleanedText.indexOf('{');
+      const lastBrace = cleanedText.lastIndexOf('}');
+      
+      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+        cleanedText = cleanedText.substring(firstBrace, lastBrace + 1);
+      }
+      
+      analysis = JSON.parse(cleanedText);
     } catch (parseError) {
-      // If JSON parsing fails, return the raw text
+      // If JSON parsing fails, return the raw text for debugging
       console.error('Failed to parse OpenAI response as JSON:', parseError);
+      console.error('Raw response:', analysisText);
       return NextResponse.json({ 
         error: 'Failed to parse analysis response',
-        rawResponse: analysisText
+        rawResponse: analysisText,
+        parseError: parseError instanceof Error ? parseError.message : String(parseError)
       }, { status: 500 });
     }
 
