@@ -708,18 +708,28 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
 
       const data = await response.json();
       
-      // Create and download the LaTeX file
-      const latexBlob = new Blob([data.latexCode], { type: 'text/plain' });
-      const url = URL.createObjectURL(latexBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `improved-resume-${new Date().toISOString().split('T')[0]}.tex`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      alert('Your improved resume LaTeX file has been downloaded! You can compile it to PDF using Overleaf or a local LaTeX compiler.');
+      if (data.pdfData) {
+        // Convert base64 to blob and download PDF
+        const pdfBytes = atob(data.pdfData);
+        const pdfArray = new Uint8Array(pdfBytes.length);
+        for (let i = 0; i < pdfBytes.length; i++) {
+          pdfArray[i] = pdfBytes.charCodeAt(i);
+        }
+        
+        const pdfBlob = new Blob([pdfArray], { type: 'application/pdf' });
+        const url = URL.createObjectURL(pdfBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `improved-resume-${new Date().toISOString().split('T')[0]}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        alert('Your improved resume PDF has been downloaded! The resume has been restructured using AI with your Level 1 improvements.');
+      } else {
+        throw new Error('No PDF data received');
+      }
     } catch (error) {
       console.error('Error generating resume:', error);
       alert('Failed to generate resume. Please try again.');

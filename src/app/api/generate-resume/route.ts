@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import puppeteer from 'puppeteer';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -32,14 +33,14 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are a professional resume writer and LaTeX expert. Your task is to transform a candidate's resume into a professional LaTeX format while implementing Level 1 improvements.
+    const prompt = `You are a professional resume writer and PDF formatting expert. Your task is to transform a candidate's resume into a professional, well-formatted resume while implementing Level 1 improvements.
 
 CRITICAL RULES:
 1. NEVER create or fabricate new facts, achievements, or experiences not present in the original resume
 2. Only restructure, reword, and optimize existing information
-3. Use the Action Verb + Task/Project + Outcome format for all experience bullets
-4. Follow the LaTeX template structure provided exactly
-5. Maintain chronological accuracy and factual integrity
+3. Use the "Accomplished [A] as measured by [B] by doing [C]" format for all experience bullets
+4. Maintain chronological accuracy and factual integrity
+5. Create a clean, professional resume format suitable for ATS systems
 
 INPUT DATA:
 Original Resume:
@@ -48,206 +49,137 @@ ${resumeText}
 Level 1 Improvements to Implement:
 ${JSON.stringify(level1Improvements, null, 2)}
 
-Candidate Name: ${candidateName || "John Doe"}
+Candidate Name: ${candidateName || "Professional Candidate"}
 Contact Information: ${contactInfo || "Update contact information"}
 
 TASK:
-Transform the resume into the following LaTeX format. Extract information from the original resume and restructure it according to Level 1 improvements.
+Transform the resume into a clean, professional format with the following structure. Extract information from the original resume and restructure it according to Level 1 improvements.
 
 For each experience entry, use this format:
-- Action Verb + Task/Project + Outcome/Impact
+- "Accomplished [A] as measured by [B] by doing [C]"
 - Include quantified results where available in original resume
 - Enhance technical keywords based on Level 1 keyword recommendations
 - Reorganize content for maximum ATS compatibility
 
-LaTeX Template Structure to Follow:
-\\documentclass[10pt, letterpaper]{article}
+RESUME FORMAT TO FOLLOW (Return as clean HTML format for PDF conversion):
 
-% Packages:
-\\usepackage[
-    ignoreheadfoot, % set margins without considering header and footer
-    top=2 cm, % seperation between body and page edge from the top
-    bottom=2 cm, % seperation between body and page edge from the bottom
-    left=2 cm, % seperation between body and page edge from the left
-    right=2 cm, % seperation between body and page edge from the right
-    footskip=1.0 cm, % seperation between body and footer
-    % showframe % for debugging 
-]{geometry} % for adjusting page geometry
-\\usepackage{titlesec} % for customizing section titles
-\\usepackage{tabularx} % for making tables with fixed width columns
-\\usepackage{array} % tabularx requires this
-\\usepackage[dvipsnames]{xcolor} % for coloring text
-\\definecolor{primaryColor}{RGB}{0, 0, 0} % define primary color
-\\usepackage{enumitem} % for customizing lists
-\\usepackage{fontawesome5} % for using icons
-\\usepackage{amsmath} % for math
-\\usepackage[
-    pdftitle={[CANDIDATE_NAME]'s Resume},
-    pdfauthor={[CANDIDATE_NAME]},
-    pdfcreator={LaTeX with Job Fit AI Portal},
-    colorlinks=true,
-    urlcolor=primaryColor
-]{hyperref} % for links, metadata and bookmarks
-\\usepackage[pscoord]{eso-pic} % for floating text on the page
-\\usepackage{calc} % for calculating lengths
-\\usepackage{bookmark} % for bookmarks
-\\usepackage{lastpage} % for getting the total number of pages
-\\usepackage{changepage} % for one column entries (adjustwidth environment)
-\\usepackage{paracol} % for two and three column entries
-\\usepackage{ifthen} % for conditional statements
-\\usepackage{needspace} % for avoiding page brake right after the section title
-\\usepackage{iftex} % check if engine is pdflatex, xetex or luatex
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>[CANDIDATE_NAME] - Resume</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            margin: 0.75in;
+            color: #000;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        .name {
+            font-size: 24pt;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .contact {
+            font-size: 11pt;
+            margin-bottom: 3px;
+        }
+        .section {
+            margin-bottom: 18px;
+        }
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-bottom: 1px solid #000;
+            margin-bottom: 8px;
+            padding-bottom: 2px;
+        }
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .job-title {
+            font-weight: bold;
+            font-size: 12pt;
+        }
+        .job-date {
+            font-style: italic;
+            font-size: 10pt;
+        }
+        .company {
+            font-style: italic;
+            margin-bottom: 5px;
+        }
+        .achievements {
+            margin-left: 0;
+            padding-left: 15px;
+        }
+        .achievements li {
+            margin-bottom: 3px;
+            text-align: justify;
+        }
+        .skills-section {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .skill-category {
+            margin-right: 20px;
+            margin-bottom: 8px;
+        }
+        .skill-category strong {
+            font-weight: bold;
+        }
+        @media print {
+            body { margin: 0.5in; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="name">[CANDIDATE_NAME]</div>
+        <div class="contact">[CONTACT_INFORMATION]</div>
+    </div>
 
-% Ensure that generate pdf is machine readable/ATS parsable:
-\\ifPDFTeX
-    \\input{glyphtounicode}
-    \\pdfgentounicode=1
-    \\usepackage[T1]{fontenc}
-    \\usepackage[utf8]{inputenc}
-    \\usepackage{lmodern}
-\\fi
+    [RESUME_SECTIONS]
 
-\\usepackage{charter}
-
-% Some settings:
-\\raggedright
-\\AtBeginEnvironment{adjustwidth}{\\partopsep0pt} % remove space before adjustwidth environment
-\\pagestyle{empty} % no header or footer
-\\setcounter{secnumdepth}{0} % no section numbering
-\\setlength{\\parindent}{0pt} % no indentation
-\\setlength{\\topskip}{0pt} % no top skip
-\\setlength{\\columnsep}{0.15cm} % set column seperation
-\\pagenumbering{gobble} % no page numbering
-
-\\titleformat{\\section}{\\needspace{4\\baselineskip}\\bfseries\\large}{}{0pt}{}[\\vspace{1pt}\\titlerule]
-
-\\titlespacing{\\section}{
-    % left space:
-    -1pt
-}{
-    % top space:
-    0.3 cm
-}{
-    % bottom space:
-    0.2 cm
-} % section title spacing
-
-\\renewcommand\\labelitemi{$\\vcenter{\\hbox{\\small$\\bullet$}}$} % custom bullet points
-\\newenvironment{highlights}{
-    \\begin{itemize}[
-        topsep=0.10 cm,
-        parsep=0.10 cm,
-        partopsep=0pt,
-        itemsep=0pt,
-        leftmargin=0 cm + 10pt
-    ]
-}{
-    \\end{itemize}
-} % new environment for highlights
-
-\\newenvironment{highlightsforbulletentries}{
-    \\begin{itemize}[
-        topsep=0.10 cm,
-        parsep=0.10 cm,
-        partopsep=0pt,
-        itemsep=0pt,
-        leftmargin=10pt
-    ]
-}{
-    \\end{itemize}
-} % new environment for highlights for bullet entries
-
-\\newenvironment{onecolentry}{
-    \\begin{adjustwidth}{
-        0 cm + 0.00001 cm
-    }{
-        0 cm + 0.00001 cm
-    }
-}{
-    \\end{adjustwidth}
-} % new environment for one column entries
-
-\\newenvironment{twocolentry}[2][]{
-    \\onecolentry
-    \\def\\secondColumn{#2}
-    \\setcolumnwidth{\\fill, 4.5 cm}
-    \\begin{paracol}{2}
-}{
-    \\switchcolumn \\raggedleft \\secondColumn
-    \\end{paracol}
-    \\endonecolentry
-} % new environment for two column entries
-
-\\newenvironment{threecolentry}[3][]{
-    \\onecolentry
-    \\def\\thirdColumn{#3}
-    \\setcolumnwidth{, \\fill, 4.5 cm}
-    \\begin{paracol}{3}
-    {\\raggedright #2} \\switchcolumn
-}{
-    \\switchcolumn \\raggedleft \\thirdColumn
-    \\end{paracol}
-    \\endonecolentry
-} % new environment for three column entries
-
-\\newenvironment{header}{
-    \\setlength{\\topsep}{0pt}\\par\\kern\\topsep\\centering\\linespread{1.5}
-}{
-    \\par\\kern\\topsep
-} % new environment for the header
-
-\\newcommand{\\placelastupdatedtext}{% \\placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
-  \\AddToShipoutPictureFG*{% Add <stuff> to current page foreground
-    \\put(
-        \\LenToUnit{\\paperwidth-2 cm-0 cm+0.05cm},
-        \\LenToUnit{\\paperheight-1.0 cm}
-    ){\\vtop{{\\null}\\makebox[0pt][c]{
-        \\small\\color{gray}\\textit{Generated by Job Fit AI Portal}\\hspace{\\widthof{Generated by Job Fit AI Portal}}
-    }}}%
-  }%
-}%
-
-% save the original href command in a new command:
-\\let\\hrefWithoutArrow\\href
-
-\\begin{document}
-    \\newcommand{\\AND}{\\unskip
-        \\cleaders\\copy\\ANDbox\\hskip\\wd\\ANDbox
-        \\ignorespaces
-    }
-    \\newsavebox\\ANDbox
-    \\sbox\\ANDbox{$|$}
-
-    \\begin{header}
-        \\fontsize{25 pt}{25 pt}\\selectfont [CANDIDATE_NAME]
-
-        \\vspace{5 pt}
-
-        \\normalsize
-        [CONTACT_INFORMATION]
-    \\end{header}
-
-    \\vspace{5 pt - 0.3 cm}
-
-    [RESUME_CONTENT]
-
-\\end{document}
+</body>
+</html>
 
 TRANSFORMATION INSTRUCTIONS:
 1. Replace [CANDIDATE_NAME] with the actual candidate name from input
-2. Replace [CONTACT_INFORMATION] with properly formatted contact details using \\mbox{} and \\AND separators
-3. Replace [RESUME_CONTENT] with optimized sections following this priority order:
+2. Replace [CONTACT_INFORMATION] with properly formatted contact details (email, phone, location, LinkedIn, etc.)
+3. Replace [RESUME_SECTIONS] with optimized sections following this priority order:
    - Professional Summary (if exists) - enhance with Level 1 keywords
-   - Experience (most important) - apply Action Verb + Task/Project + Outcome format
+   - Experience (most important) - apply "Accomplished [A] as measured by [B] by doing [C]" format
    - Skills - reorganize based on Level 1 recommendations
    - Education - maintain factual accuracy
    - Projects/Certifications - if relevant to target role
 
 EXPERIENCE BULLET TRANSFORMATION RULES:
 For each experience bullet, follow this exact format:
-- START with a strong action verb (Led, Developed, Implemented, Optimized, etc.)
-- ADD the task/project context (what was built, managed, or improved)
-- END with quantified outcome/impact (metrics, percentages, business results)
+- "Accomplished [A] as measured by [B] by doing [C]"
+- [A] = The achievement/result (what was accomplished)
+- [B] = The quantified measurement (metrics, percentages, numbers)
+- [C] = The method/process used (how it was done)
+
+SECTION FORMATTING:
+- Use <div class="section"> for each section
+- Use <div class="section-title"> for section headers
+- Use <div class="job-header"> for job titles and dates
+- Use <ul class="achievements"> for bullet points
+- Maintain professional, clean formatting
+
+Return ONLY the complete HTML resume, properly formatted and ready for PDF conversion.
 
 Examples of proper transformation:
 BEFORE: "Worked on various marketing campaigns"
@@ -267,14 +199,14 @@ QUALITY ASSURANCE:
 - Preserve all chronological information exactly as provided
 - Maintain professional tone throughout
 
-Return ONLY the complete LaTeX code, ready to compile. Do not include any explanations or comments outside the LaTeX document.`;
+Return ONLY the complete HTML code, ready for PDF conversion. Do not include any explanations or comments outside the HTML document.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a professional resume writer and LaTeX expert. Generate complete, compilable LaTeX code that transforms resumes while maintaining factual accuracy."
+          content: "You are a professional resume writer and HTML expert. Generate complete, well-formatted HTML that transforms resumes while maintaining factual accuracy. Return ONLY clean HTML code."
         },
         {
           role: "user",
@@ -285,16 +217,42 @@ Return ONLY the complete LaTeX code, ready to compile. Do not include any explan
       max_tokens: 16000,
     });
 
-    const latexCode = completion.choices[0]?.message?.content;
+    const htmlCode = completion.choices[0]?.message?.content;
     
-    if (!latexCode) {
+    if (!htmlCode) {
       return NextResponse.json({ 
-        error: 'No LaTeX code generated' 
+        error: 'No HTML code generated' 
       }, { status: 500 });
     }
 
+    // Generate PDF from HTML using Puppeteer
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    
+    const page = await browser.newPage();
+    await page.setContent(htmlCode, { waitUntil: 'networkidle0' });
+    
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      margin: {
+        top: '0.5in',
+        bottom: '0.5in',
+        left: '0.5in',
+        right: '0.5in'
+      },
+      printBackground: true
+    });
+    
+    await browser.close();
+
+    // Return PDF as base64 for download
+    const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
+
     return NextResponse.json({
-      latexCode,
+      pdfData: pdfBase64,
+      htmlCode: htmlCode, // Also return HTML for debugging
       timestamp: new Date().toISOString(),
       candidateName: candidateName || "Resume",
     });
