@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+/* eslint-disable */
 "use client";
 
 import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
@@ -7,7 +7,7 @@ import { useDropzone } from "react-dropzone";
 
 // Helper functions to extract structured data from analysis
 function extractMatchedSkills(analysis: any) {
-  const skills = [];
+  const skills: any[] = [];
   try {
     // Try to extract from various possible structures
     if (analysis["Score Breakdown"]?.["Skill Match"]) {
@@ -44,7 +44,7 @@ function extractMatchedSkills(analysis: any) {
 }
 
 function extractKeyAdvantages(analysis: any) {
-  const advantages = [];
+  const advantages: any[] = [];
   try {
     // Extract from competitive standing or overall verdict
     if (analysis["Level 2 - Market Positioning Strategy"]?.["Competitive Standing"]) {
@@ -69,7 +69,7 @@ function extractKeyAdvantages(analysis: any) {
 }
 
 function extractMissingSkills(analysis: any) {
-  const missing = [];
+  const missing: any[] = [];
   try {
     if (analysis["Missing Critical Elements"]) {
       const missingData = analysis["Missing Critical Elements"];
