@@ -4,6 +4,7 @@
 import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import MinimalistResultsDashboard from "../components/MinimalistResultsDashboard";
 
 // Helper functions to extract structured data from analysis
 function extractMatchedSkills(analysis: any) {
@@ -1336,7 +1337,7 @@ function Dashboard() {
 
   // Show results if available
   if (analysisResult) {
-    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} />;
+    return <MinimalistResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} />;
   }
 
   return (
