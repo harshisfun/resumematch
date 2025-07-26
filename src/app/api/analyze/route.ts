@@ -56,7 +56,9 @@ Carefully compare the candidate's resume against the job description, considerin
 * Role responsibilities and expectations
 * Career progression requirements
 
-CRITICAL REQUIREMENT FOR RESUME TRANSFORMATION EXAMPLES:
+CRITICAL REQUIREMENTS:
+
+FOR RESUME TRANSFORMATION EXAMPLES:
 1. Extract 3-5 actual bullet points from the candidate's resume (copy them exactly)
 2. Rewrite each bullet point to better align with the JD using:
    - Job-relevant keywords from the JD
@@ -67,6 +69,18 @@ CRITICAL REQUIREMENT FOR RESUME TRANSFORMATION EXAMPLES:
 3. For the skills section, take the actual skills listed and reorganize/enhance them
 4. If there's a summary/objective, rewrite it to better match the JD
 5. Always preserve factual accuracy - enhance presentation, don't fabricate new experiences
+
+FOR COURSE/CERTIFICATION RECOMMENDATIONS:
+1. Recommend EXACTLY 3 courses/certifications that are most relevant to the JD requirements
+2. Prioritize well-known, reputable providers (Coursera, Udemy, AWS, Google, Microsoft, etc.)
+3. Include actual, working URLs to the specific courses (not just platform homepages)
+4. Focus on the most popular and industry-recognized certifications/courses
+5. Consider the candidate's current skill level and suggest appropriate next steps
+6. Examples of good recommendations:
+   - AWS Certified Solutions Architect (for cloud roles)
+   - Google Data Analytics Certificate (for data roles)
+   - Coursera Machine Learning Specialization by Stanford (for ML roles)
+   - Scrum Master Certification (for product/project management roles)
 
 Provide the analysis in the following JSON structure:
 
@@ -168,23 +182,28 @@ Provide the analysis in the following JSON structure:
          "Key Changes": "Specific improvements made"
        }
      },
-    "Column B - Long-term Career Development": {
-      "Skills Development": [
-        "Technical and soft skills to acquire for better role fit"
-      ],
-      "Certifications": [
-        "Industry-relevant certifications that would strengthen candidacy"
-      ],
-      "Education": [
-        "Additional degrees, courses, or training programs to pursue"
-      ],
-      "Experience": [
-        "Types of projects, roles, or responsibilities to seek"
-      ],
-      "Professional Development": [
-        "Networking, leadership opportunities, or industry involvement"
-      ]
-    }
+         "Column B - Long-term Career Development": {
+       "Top 3 Recommended Courses/Certifications": [
+         {
+           "Course/Certification Name": "Specific course or certification name",
+           "Provider": "Platform or institution name (e.g., Coursera, Udemy, AWS, Google)",
+           "Duration": "Time to complete (e.g., 3-6 months, 40 hours)",
+           "Cost": "Approximate cost (e.g., $49/month, $2000, Free)",
+           "Relevance": "Why this specific course/cert is valuable for the JD",
+           "Direct Link": "https://actual-course-url.com",
+           "Priority": "High/Medium based on JD alignment"
+         }
+       ],
+       "Skills Development": [
+         "Technical and soft skills to acquire for better role fit"
+       ],
+       "Experience Building": [
+         "Types of projects, roles, or responsibilities to seek"
+       ],
+       "Professional Development": [
+         "Networking, leadership opportunities, or industry involvement"
+       ]
+     }
   },
   "Market Competitiveness": {
     "Competitive Level": "Below Average/Average/Above Average/Exceptional",

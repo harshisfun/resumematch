@@ -185,28 +185,64 @@ function extractFormatRecommendations(analysis: any) {
   ];
 }
 
-function extractSkillRecommendations(analysis: any) {
-  const skills = [];
+function extractCourseRecommendations(analysis: any) {
+  const courses = [];
   try {
-    if (analysis["Level 3 - Long-term Development Plan"]?.["Skills Development Roadmap"]) {
+    // Try new structure first
+    if (analysis["Scope of Improvements"]?.["Column B - Long-term Career Development"]?.["Top 3 Recommended Courses/Certifications"]) {
+      const courseData = analysis["Scope of Improvements"]["Column B - Long-term Career Development"]["Top 3 Recommended Courses/Certifications"];
+      if (Array.isArray(courseData)) {
+        courses.push(...courseData);
+      }
+    }
+    
+    // Fallback to old structure
+    if (courses.length === 0 && analysis["Level 3 - Long-term Development Plan"]?.["Skills Development Roadmap"]) {
       const skillsData = analysis["Level 3 - Long-term Development Plan"]["Skills Development Roadmap"];
       Object.entries(skillsData).forEach(([key, value]: [string, any]) => {
-        skills.push({
-          name: key.replace(/([A-Z])/g, ' $1').trim(),
-          timeline: "3-6 months",
-          priority: "High",
-          description: String(value),
+        courses.push({
+          "Course/Certification Name": key.replace(/([A-Z])/g, ' $1').trim(),
+          "Provider": "Various Platforms",
+          "Duration": "3-6 months",
+          "Cost": "Varies",
+          "Relevance": String(value),
+          "Direct Link": "#",
+          "Priority": "High"
         });
       });
     }
   } catch (error) {
-    console.error("Error extracting skill recommendations:", error);
+    console.error("Error extracting course recommendations:", error);
   }
   
-  return skills.length > 0 ? skills : [
-    { name: "Machine Learning Fundamentals", timeline: "3-6 months", priority: "High" },
-    { name: "Advanced Analytics Certification", timeline: "6-12 months", priority: "Medium" },
-    { name: "Product Management Framework", timeline: "3-4 months", priority: "High" }
+  return courses.length > 0 ? courses : [
+    {
+      "Course/Certification Name": "Machine Learning Specialization",
+      "Provider": "Coursera (Stanford University)",
+      "Duration": "3 months",
+      "Cost": "$49/month",
+      "Relevance": "Essential for AI/ML roles, covers fundamentals to advanced topics",
+      "Direct Link": "https://www.coursera.org/specializations/machine-learning",
+      "Priority": "High"
+    },
+    {
+      "Course/Certification Name": "AWS Certified Solutions Architect",
+      "Provider": "Amazon Web Services",
+      "Duration": "2-3 months",
+      "Cost": "$150 exam fee",
+      "Relevance": "Industry-standard cloud certification for technical roles",
+      "Direct Link": "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+      "Priority": "High"
+    },
+    {
+      "Course/Certification Name": "Google Data Analytics Certificate",
+      "Provider": "Coursera (Google)",
+      "Duration": "6 months",
+      "Cost": "$49/month",
+      "Relevance": "Comprehensive data analysis skills for data-driven roles",
+      "Direct Link": "https://www.coursera.org/professional-certificates/google-data-analytics",
+      "Priority": "Medium"
+    }
   ];
 }
 
@@ -885,18 +921,40 @@ function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => v
                     <span className="mr-2">📚</span>
                     Long-term Development (3-18 months)
                   </h4>
-                  <div className="space-y-4">
-                    <div>
-                      <h5 className="font-medium text-purple-200 mb-2">Skills & Certifications</h5>
-                      <div className="space-y-2">
-                        {extractSkillRecommendations(analysis).map((skill, index) => (
-                          <div key={index} className="text-sm text-gray-300 bg-gray-800 p-2 rounded">
-                            <div className="font-medium">{skill.name}</div>
-                            <div className="text-xs text-gray-400 mt-1">{skill.timeline} • {skill.priority}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                                     <div className="space-y-4">
+                     <div>
+                       <h5 className="font-medium text-purple-200 mb-2">🎓 Top 3 Recommended Courses & Certifications</h5>
+                       <div className="space-y-3">
+                         {extractCourseRecommendations(analysis).map((course, index) => (
+                           <div key={index} className="bg-gray-800 p-4 rounded-lg border border-purple-700/30">
+                             <div className="flex justify-between items-start mb-2">
+                               <h6 className="font-medium text-purple-300">{course["Course/Certification Name"]}</h6>
+                               <span className={`px-2 py-1 rounded text-xs ${
+                                 course.Priority === "High" ? "bg-red-600/20 text-red-300" : "bg-yellow-600/20 text-yellow-300"
+                               }`}>
+                                 {course.Priority} Priority
+                               </span>
+                             </div>
+                             <div className="text-xs text-gray-400 mb-2">
+                               <div className="grid grid-cols-2 gap-2">
+                                 <span>📚 {course.Provider}</span>
+                                 <span>⏱️ {course.Duration}</span>
+                                 <span>💰 {course.Cost}</span>
+                                 <span className="col-span-2 mt-1">💡 {course.Relevance}</span>
+                               </div>
+                             </div>
+                             <a
+                               href={course["Direct Link"]}
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               className="inline-flex items-center text-sm bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded transition-colors"
+                             >
+                               View Course →
+                             </a>
+                           </div>
+                         ))}
+                       </div>
+                     </div>
                     <div>
                       <h5 className="font-medium text-purple-200 mb-2">Experience Building</h5>
                       <div className="space-y-2">
