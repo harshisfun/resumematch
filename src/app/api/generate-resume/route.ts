@@ -303,10 +303,13 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
 </body>
 </html>
 
-FILL THE TEMPLATE EXACTLY AS FOLLOWS:
-1. Replace [CANDIDATE_NAME] with: ${finalCandidateName}
-2. Replace [CONTACT_INFORMATION] with: ${finalContactInfo}
-3. Replace [RESUME_SECTIONS] with the sections below using EXACT classes:
+CRITICAL INSTRUCTIONS - READ CAREFULLY:
+1. Extract ALL content from the original resume - do not skip any sections, jobs, or information
+2. Replace [CANDIDATE_NAME] with: ${finalCandidateName}
+3. Replace [CONTACT_INFORMATION] with: ${finalContactInfo}
+4. Include ALL jobs, roles, and experiences from the original resume
+5. Preserve chronological order and ALL details
+6. Replace [RESUME_SECTIONS] with ALL sections below using EXACT classes:
 
 PROFESSIONAL SUMMARY SECTION (if exists):
 <div class="section">
@@ -314,19 +317,36 @@ PROFESSIONAL SUMMARY SECTION (if exists):
     <p>Enhanced summary with Level 1 keywords...</p>
 </div>
 
-EXPERIENCE SECTION:
+EXPERIENCE SECTION - INCLUDE ALL JOBS FROM ORIGINAL RESUME:
 <div class="section">
     <div class="section-title">Professional Experience</div>
+    
+    <!-- FIRST JOB ENTRY -->
     <div class="job-entry">
         <div class="job-header">
-            <div class="job-title-company">Job Title - Company Name</div>
+            <div class="job-title-company">Most Recent Job Title - Company Name</div>
             <div class="job-date">Start Date - End Date</div>
         </div>
         <ul class="job-achievements">
             <li>Accomplished [specific result] as measured by [quantified metric] by doing [specific method/action]</li>
             <li>Accomplished [specific result] as measured by [quantified metric] by doing [specific method/action]</li>
+            <li>Continue with ALL achievements from this role...</li>
         </ul>
     </div>
+    
+    <!-- SECOND JOB ENTRY (if exists) -->
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-title-company">Previous Job Title - Company Name</div>
+            <div class="job-date">Start Date - End Date</div>
+        </div>
+        <ul class="job-achievements">
+            <li>Accomplished [specific result] as measured by [quantified metric] by doing [specific method/action]</li>
+            <li>Include ALL achievements from this role...</li>
+        </ul>
+    </div>
+    
+    <!-- ADD MORE JOB ENTRIES AS NEEDED - DO NOT SKIP ANY ROLES -->
 </div>
 
 SKILLS SECTION:
@@ -350,6 +370,35 @@ EDUCATION SECTION:
     </div>
 </div>
 
+ADDITIONAL SECTIONS (if present in original resume):
+<!-- Include any of these sections if they exist in the original resume -->
+<!-- PROJECTS SECTION -->
+<div class="section">
+    <div class="section-title">Projects</div>
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-title-company">Project Name</div>
+            <div class="job-date">Project Date</div>
+        </div>
+        <ul class="job-achievements">
+            <li>Project accomplishment...</li>
+        </ul>
+    </div>
+</div>
+
+<!-- CERTIFICATIONS SECTION -->
+<div class="section">
+    <div class="section-title">Certifications</div>
+    <div class="skills-grid">
+        <div class="skill-category">
+            <span class="skill-label">Certification:</span>
+            <span class="skill-list">Issuing Organization, Date</span>
+        </div>
+    </div>
+</div>
+
+MANDATORY: Review the original resume and include ALL sections that exist, not just the basic ones.
+
 CRITICAL: Return ONLY the complete HTML document starting with <!DOCTYPE html> and ending with </html>. 
 Do NOT include any explanatory text, markdown formatting, or additional comments outside the HTML.
 The response must be pure HTML code that can be directly rendered.
@@ -372,12 +421,23 @@ QUALITY ASSURANCE:
 - Preserve all chronological information exactly as provided
 - Maintain professional tone throughout
 
-IMPORTANT EXTRACTION RULES:
+MANDATORY CONTENT INCLUSION RULES:
 1. Extract actual dates from the original resume - do not use placeholder dates like "[Dates]"
 2. Use the exact candidate name and contact information from the original resume
-3. Preserve all factual information while improving presentation
-4. If contact information is incomplete, use only what is available
-5. Maintain chronological accuracy for all dates and durations
+3. Include EVERY job, role, and position mentioned in the original resume
+4. Include ALL bullet points and achievements from each role
+5. Include ALL skills mentioned in the original resume
+6. Include ALL education details (degree, university, dates, GPA if mentioned)
+7. Include any projects, certifications, or additional sections from original
+8. Do NOT summarize or condense - include complete information
+9. Preserve all factual information while improving presentation format
+10. Maintain chronological accuracy for all dates and durations
+
+CONTENT COMPLETENESS CHECK:
+- Count the number of jobs in original resume and ensure all are included
+- Count the number of bullet points per job and ensure all are included
+- Verify all skills categories are preserved
+- Ensure contact information is complete and properly formatted
 
 Return ONLY the complete HTML code, ready for PDF conversion. Do not include any explanations or comments outside the HTML document.`;
 
@@ -386,7 +446,7 @@ Return ONLY the complete HTML code, ready for PDF conversion. Do not include any
       messages: [
         {
           role: "system",
-          content: "You are a professional resume writer and HTML expert. Transform resumes using the provided template while maintaining factual accuracy. Your response must be ONLY the filled HTML template with no additional text, explanations, or markdown formatting."
+          content: "You are a professional resume writer and HTML expert. Transform resumes using the provided template while maintaining factual accuracy and COMPLETE content inclusion. You must include ALL jobs, achievements, skills, and sections from the original resume. Do NOT summarize or omit content. Your response must be ONLY the filled HTML template with no additional text, explanations, or markdown formatting."
         },
         {
           role: "user",
