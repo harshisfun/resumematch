@@ -46,154 +46,122 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are a senior technical recruiter and career strategist with 15+ years of experience evaluating candidates for tech roles across Fortune 500 companies.
+    const prompt = `You are an expert resume analyzer and career consultant. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide structured feedback in the format specified below.
 
-Inputs:
-1. Candidate's resume
-2. Job description
+Analysis Instructions:
+Carefully compare the candidate's resume against the job description, considering:
+* Required skills, qualifications, and experience
+* Preferred qualifications and nice-to-have skills
+* Company culture and industry standards
+* Role responsibilities and expectations
+* Career progression requirements
 
-Core Instructions:
-* Be fair, objective, and data-driven. Never hallucinate information not present in the resume.
-* Use only explicit content from both documents.
-* Penalize heavily for missing critical requirements from the JD.
-* Provide actionable, specific recommendations based on industry best practices.
-* Consider market competitiveness and hiring standards for the role level.
+Provide the analysis in the following JSON structure:
 
-Task: Analyze the resume against the job description and provide a comprehensive evaluation with the following structure:
-
-## CORE ANALYSIS
-* "Match Score": Overall compatibility percentage (0-100)
-* "Score Breakdown": Detailed category analysis:
-   * "Technical Skills Match": 
-      * Primary Skills: Critical must-have skills from JD
-         * Skills List: Comma-separated list
-         * Significance: Percentage weight (should total ~60-70% for technical roles)
-         * Match Score: 0-100%
-         * Evidence: Exact resume quotes supporting each match
-         * Gap Analysis: Missing critical skills with impact assessment
-      * Secondary Skills: Important but not critical skills
-         * Skills List: Comma-separated list  
-         * Significance: Percentage weight (should total ~20-30%)
-         * Match Score: 0-100%
-         * Evidence: Exact resume quotes
-      * Nice-to-have Skills: Bonus skills that add value
-         * Skills List: Comma-separated list
-         * Significance: Percentage weight (should total ~10-20%)
-         * Match Score: 0-100%
-         * Evidence: Exact resume quotes
-   * "Experience Analysis":
-      * Years of Experience: Required vs. actual with gap analysis
-      * Relevant Project Complexity: Scale and impact of projects
-      * Leadership/Management: Team size, scope of responsibility
-      * Evidence: Exact resume quotes supporting experience claims
-   * "Industry & Domain Expertise":
-      * Industry Familiarity: Specific industry knowledge (0-100)
-      * Domain Depth: Technical domain specialization (0-100)
-      * Business Context: Understanding of business challenges (0-100)
-      * Evidence: Exact resume quotes
-   * "Education & Credentials": 
-      * Degree Requirements: Match analysis (0-100)
-      * Certifications: Relevant professional certifications
-      * Continuous Learning: Evidence of skill development
-      * Evidence: Exact resume quotes
-
-* "Missing Critical Elements": 
-   * Must-have skills completely absent from resume
-   * Experience gaps (years, type, scale)
-   * Required certifications or education
-   * Industry-specific knowledge gaps
-   * Evidence: Exact JD quotes showing requirements
-
-* "Competitive Assessment":
-   * Role Level: Junior/Mid/Senior/Principal based on JD requirements
-   * Market Competitiveness: How this candidate compares to typical hires
-   * Hiring Bar: Company tier estimation (Startup/Mid-size/Enterprise/FAANG)
-   * Candidate Positioning: Where they stand in the applicant pool
-
-## THREE-LEVEL RECOMMENDATION SYSTEM
-
-### "Level 1 - Immediate Resume Optimization" (0-2 weeks implementation):
-* "Keyword Enhancement": 
-   * Exact missing keywords from JD to incorporate naturally
-   * Specific technical terms and tools to add based on existing experience
-   * Industry-specific language alignment with concrete examples
-   * ATS keyword density optimization suggestions
-* "Content Restructuring":
-   * Transform existing bullets to "Action Verb + Task/Project + Quantified Outcome" format
-   * Identify achievements that lack metrics and suggest specific quantification
-   * Reorder bullet points by relevance and impact for this specific role
-   * Skills section reorganization by relevance to JD requirements
-   * Add missing context to existing experience (team size, budget, timeline)
-* "Format Optimization":
-   * Optimal section order for this role (Experience vs Skills vs Projects)
-   * Specific resume sections to emphasize or de-emphasize
-   * Length optimization recommendations (expand/condense specific areas)
-   * ATS-friendly formatting improvements with specific suggestions
-
-### "Level 2 - Market Positioning Strategy" (Immediate insight):
-* "Role Competitiveness Analysis":
-   * Market demand assessment for this role in current job market
-   * Typical candidate experience level and background for this position
-   * Application success probability based on current profile (with percentile ranking)
-   * Expected interview process complexity and timeline
-   * Salary range positioning based on experience level
-* "Competitive Standing":
-   * Top 3 unique strengths that differentiate from typical candidates
-   * Most common candidate profiles competing for this role
-   * Specific achievements to highlight that others likely lack
-   * Potential concerns recruiters might have (with mitigation strategies)
-   * Industry experience advantage or disadvantage analysis
-* "Application Strategy":
-   * Optimal application timing and approach for this company type
-   * Specific networking targets (roles, departments, alumni connections)
-   * Interview preparation roadmap with priority focus areas
-   * Cover letter strategy with key points to emphasize
-   * Follow-up strategy recommendations
-
-### "Level 3 - Long-term Development Plan" (3-18 months implementation):
-* "Skills Development Roadmap":
-   * Top 3 priority skills to learn with specific technologies/frameworks/tools
-   * Exact learning path: beginner → intermediate → advanced milestones
-   * Recommended platforms, courses, and resources with cost estimates
-   * Practical application projects to demonstrate competency
-   * 3-month, 6-month, and 12-month skill acquisition timeline
-* "Experience Enhancement":
-   * Specific project types to pursue that align with target role requirements
-   * Open source contribution opportunities in relevant technologies
-   * Freelance/consulting projects that build portfolio credibility
-   * Internal projects or initiatives to lead at current company
-   * Career transition strategy (current role → bridge role → target role)
-* "Professional Development":
-   * High-ROI certifications ranked by industry recognition and cost
-   * Key industry conferences and networking events with expected ROI
-   * Thought leadership opportunities (LinkedIn, Medium, podcasts) with topic suggestions
-   * Mentorship targets and how to approach them
-   * Professional associations and communities to join
-* "Educational Advancement":
-   * Formal education gaps and most efficient ways to address them
-   * Bootcamp vs degree vs certification analysis for career goals
-   * Executive education programs for leadership development
-   * Online degree programs with industry partnerships
-   * Research opportunities that could accelerate career progression
-
-## SUPPORTING ANALYSIS
-* "Skill Comparison Matrix":
-   * Required Skills: All skills from JD with priority levels
-   * Present in Resume: Matching skills with evidence quotes
-   * Absent from Resume: Missing skills with impact assessment
-   * Transferable Skills: Related skills that could bridge gaps
-
-* "Overall Verdict": 
-   * 3-4 sentence recruiter-friendly summary
-   * Hiring recommendation (Strong Yes/Yes/Maybe/No/Strong No)
-   * Key strengths and critical gaps
-   * Realistic timeline for candidacy improvement
-
-* "Resume Rewrite Potential":
-   * Assess if Level 1 improvements alone could significantly boost match score
-   * Estimated score improvement possible through better presentation
-   * Specific achievements that could be highlighted more effectively
-   * ROI analysis for professional resume rewrite service
+{
+  "Overall Candidacy Score": [0-100 numeric value],
+  "Score Breakdown": {
+    "Years of Relevant Experience": {
+      "Score": [0-25 points],
+      "Weight": "25%",
+      "Analysis": "Detailed assessment of experience alignment with JD requirements and quality"
+    },
+    "Technical & Core Skills Match": {
+      "Score": [0-20 points],
+      "Weight": "20%",
+      "Analysis": "Evaluation of proficiency in required skills vs JD requirements"
+    },
+    "Previous Work Quality & Impact": {
+      "Score": [0-15 points],
+      "Weight": "15%",
+      "Analysis": "Assessment of achievements, responsibilities, and measurable outcomes"
+    },
+    "Education Institution Tier": {
+      "Score": [0-15 points],
+      "Weight": "15%",
+      "Analysis": "Institution ranking based on tier system (Tier 1: 13-15, Tier 2: 8-12, Tier 3: 3-7)"
+    },
+    "Relevant Projects & Internships": {
+      "Score": [0-10 points],
+      "Weight": "10%",
+      "Analysis": "Quality and relevance of academic/professional projects"
+    },
+    "Certifications & Additional Qualifications": {
+      "Score": [0-8 points],
+      "Weight": "8%",
+      "Analysis": "Industry-relevant certifications, professional courses, licenses"
+    },
+    "Extracurricular Activities & Leadership": {
+      "Score": [0-4 points],
+      "Weight": "4%",
+      "Analysis": "Leadership roles, volunteer work, sports, cultural activities"
+    },
+    "Communication & Presentation Skills": {
+      "Score": [0-3 points],
+      "Weight": "3%",
+      "Analysis": "Based on resume quality, presentation, portfolio"
+    }
+  },
+  "Strengths": [
+    {
+      "Category": "Skills/Experience/Education/etc",
+      "Description": "Specific qualification, skill, or experience that strongly aligns with JD",
+      "Evidence": "Exact quote or reference from resume",
+      "Impact": "How this strength benefits the role"
+    }
+  ],
+  "Weaknesses": [
+    {
+      "Category": "Skills/Experience/Education/etc", 
+      "Gap": "Specific missing requirement or area of concern",
+      "Impact": "How this weakness affects candidacy",
+      "Severity": "Critical/Moderate/Minor"
+    }
+  ],
+  "Scope of Improvements": {
+    "Column A - Structural Resume Improvements": {
+      "Keyword Integration": [
+        "Specific industry and role-relevant keywords to add from JD"
+      ],
+      "Format Enhancement": [
+        "Specific bullet points to restructure using 'Accomplished [A] as measured by [B] by doing [C]' format"
+      ],
+      "Content Reframing": [
+        "Ways to better highlight existing experience to match JD requirements"
+      ],
+      "Section Optimization": [
+        "Recommendations for resume section reorganization or emphasis"
+      ],
+      "Quantification": [
+        "Areas where metrics and numbers should be added to existing achievements"
+      ]
+    },
+    "Column B - Long-term Career Development": {
+      "Skills Development": [
+        "Technical and soft skills to acquire for better role fit"
+      ],
+      "Certifications": [
+        "Industry-relevant certifications that would strengthen candidacy"
+      ],
+      "Education": [
+        "Additional degrees, courses, or training programs to pursue"
+      ],
+      "Experience": [
+        "Types of projects, roles, or responsibilities to seek"
+      ],
+      "Professional Development": [
+        "Networking, leadership opportunities, or industry involvement"
+      ]
+    }
+  },
+  "Market Competitiveness": {
+    "Competitive Level": "Below Average/Average/Above Average/Exceptional",
+    "Market Position": "Explanation of where candidate stands in talent pool",
+    "Hiring Probability": "Realistic assessment of chances based on current profile",
+    "Benchmark Comparison": "How candidate compares to successful hires for similar positions",
+    "Percentile Ranking": "Top X% of candidates for this role"
+  }
+}
 
 Resume:
 ${resumeText}
@@ -201,7 +169,7 @@ ${resumeText}
 Job Description:
 ${jobDescription}
 
-CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all recommendations are specific, actionable, and based on current market conditions for the target role.`;
+CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all recommendations are specific, actionable, and tailored to the exact role and candidate profile.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",

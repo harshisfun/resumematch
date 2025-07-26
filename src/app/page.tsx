@@ -9,8 +9,20 @@ import { useDropzone } from "react-dropzone";
 function extractMatchedSkills(analysis: any) {
   const skills: any[] = [];
   try {
-    // Try to extract from various possible structures
-    if (analysis["Score Breakdown"]?.["Skill Match"]) {
+    // Try new structure first - extract from Strengths
+    if (analysis["Strengths"] && Array.isArray(analysis["Strengths"])) {
+      analysis["Strengths"].forEach((strength: any) => {
+        if (strength.Category && strength.Description && strength.Evidence) {
+          skills.push({
+            name: strength.Description,
+            evidence: strength.Evidence,
+          });
+        }
+      });
+    }
+    
+    // Fallback to old structure
+    if (skills.length === 0 && analysis["Score Breakdown"]?.["Skill Match"]) {
       const skillMatch = analysis["Score Breakdown"]["Skill Match"];
       Object.entries(skillMatch).forEach(([category, data]: [string, any]) => {
         if (data["Matched Skills"] && data["Matched Skills"] !== "None") {
@@ -19,18 +31,6 @@ function extractMatchedSkills(analysis: any) {
             evidence: data["Evidence"] || `${category} skills demonstrated`,
           });
         }
-      });
-    }
-    
-    // Fallback: extract from other sections
-    if (skills.length === 0 && analysis["Overall Skill Comparison Table"]?.["Present in Resume"]) {
-      const presentSkills = analysis["Overall Skill Comparison Table"]["Present in Resume"];
-      const skillList = Array.isArray(presentSkills) ? presentSkills : presentSkills.split(", ");
-      skillList.forEach((skill: string) => {
-        skills.push({
-          name: skill.trim(),
-          evidence: "Found in resume analysis",
-        });
       });
     }
   } catch (error) {
@@ -71,7 +71,20 @@ function extractKeyAdvantages(analysis: any) {
 function extractMissingSkills(analysis: any) {
   const missing: any[] = [];
   try {
-    if (analysis["Missing Critical Elements"]) {
+    // Try new structure first - extract from Weaknesses
+    if (analysis["Weaknesses"] && Array.isArray(analysis["Weaknesses"])) {
+      analysis["Weaknesses"].forEach((weakness: any) => {
+        if (weakness.Gap && weakness.Impact && weakness.Severity) {
+          missing.push({
+            name: weakness.Gap,
+            impact: `${weakness.Impact} (${weakness.Severity})`,
+          });
+        }
+      });
+    }
+    
+    // Fallback to old structure
+    if (missing.length === 0 && analysis["Missing Critical Elements"]) {
       const missingData = analysis["Missing Critical Elements"];
       if (typeof missingData === 'string') {
         missing.push({
@@ -86,18 +99,6 @@ function extractMissingSkills(analysis: any) {
           });
         });
       }
-    }
-    
-    // Also check "Absent from Resume" section
-    if (analysis["Overall Skill Comparison Table"]?.["Absent from Resume"]) {
-      const absentSkills = analysis["Overall Skill Comparison Table"]["Absent from Resume"];
-      const skillList = Array.isArray(absentSkills) ? absentSkills : absentSkills.split(", ");
-      skillList.forEach((skill: string) => {
-        missing.push({
-          name: skill.trim(),
-          impact: "Required by job description",
-        });
-      });
     }
   } catch (error) {
     console.error("Error extracting missing skills:", error);
@@ -136,7 +137,16 @@ function extractExperienceGaps(analysis: any) {
 function extractKeywordRecommendations(analysis: any) {
   const keywords = [];
   try {
-    if (analysis["Level 1 - Immediate Resume Optimization"]?.["Keyword Enhancement"]) {
+    // Try new structure first
+    if (analysis["Scope of Improvements"]?.["Column A - Structural Resume Improvements"]?.["Keyword Integration"]) {
+      const keywordData = analysis["Scope of Improvements"]["Column A - Structural Resume Improvements"]["Keyword Integration"];
+      if (Array.isArray(keywordData)) {
+        keywords.push(...keywordData);
+      }
+    }
+    
+    // Fallback to old structure
+    if (keywords.length === 0 && analysis["Level 1 - Immediate Resume Optimization"]?.["Keyword Enhancement"]) {
       const keywordData = analysis["Level 1 - Immediate Resume Optimization"]["Keyword Enhancement"];
       Object.values(keywordData).forEach((value: any) => {
         keywords.push(String(value));
@@ -225,13 +235,21 @@ function extractExperienceRecommendations(analysis: any) {
 
 function extractCompetitivenessRank(analysis: any) {
   try {
+    // Try new structure first
+    if (analysis["Market Competitiveness"]?.["Percentile Ranking"]) {
+      const ranking = analysis["Market Competitiveness"]["Percentile Ranking"];
+      const match = String(ranking).match(/(\d+)/);
+      if (match) return match[1] + "th";
+    }
+    
+    // Fallback to old structure
     if (analysis["Level 2 - Market Positioning Strategy"]?.["Role Competitiveness Analysis"]) {
       const compData = analysis["Level 2 - Market Positioning Strategy"]["Role Competitiveness Analysis"];
       // Look for percentile or ranking information
       for (const [key, value] of Object.entries(compData)) {
         if (key.toLowerCase().includes("percentile") || key.toLowerCase().includes("ranking")) {
           const match = String(value).match(/(\d+)/);
-          if (match) return match[1];
+          if (match) return match[1] + "th";
         }
       }
     }
@@ -520,15 +538,21 @@ interface AnalysisResult {
 function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => void }) {
   const [isExporting, setIsExporting] = useState(false);
   
-  // Extract match score - try different possible field names
+  // Extract match score from new structure
   let matchScore = 75; // Default fallback
   if (analysis) {
-    // Try various possible field names for the score
-    const scoreFields = ["Match Score", "matchScore", "score", "overall_score", "compatibility_score"];
-    for (const field of scoreFields) {
-      if (analysis[field] && !isNaN(Number(analysis[field]))) {
-        matchScore = Number(analysis[field]);
-        break;
+    // Try new structure first
+    if (analysis["Overall Candidacy Score"] && !isNaN(Number(analysis["Overall Candidacy Score"]))) {
+      matchScore = Number(analysis["Overall Candidacy Score"]);
+    }
+    // Fallback to old structure
+    else {
+      const scoreFields = ["Match Score", "matchScore", "score", "overall_score", "compatibility_score"];
+      for (const field of scoreFields) {
+        if (analysis[field] && !isNaN(Number(analysis[field]))) {
+          matchScore = Number(analysis[field]);
+          break;
+        }
       }
     }
   }
