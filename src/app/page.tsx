@@ -678,6 +678,70 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
     alert('PDF export feature coming soon!');
   };
 
+  const generatePDFFromHTML = async (htmlCode: string, candidateName: string) => {
+    try {
+      // Dynamically import jsPDF and html2canvas
+      const { default: jsPDF } = await import('jspdf');
+      const html2canvas = await import('html2canvas');
+      
+      // Create a temporary div to render the HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlCode;
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '0';
+      tempDiv.style.width = '210mm'; // A4 width
+      tempDiv.style.backgroundColor = 'white';
+      
+      document.body.appendChild(tempDiv);
+      
+      // Wait for fonts and images to load
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Convert HTML to canvas
+      const canvas = await html2canvas.default(tempDiv, {
+        scale: 2, // High quality
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      });
+      
+      // Clean up
+      document.body.removeChild(tempDiv);
+      
+      // Create PDF
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgWidth = 210; // A4 width in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      
+      const imgData = canvas.toDataURL('image/png');
+      
+      // If content is longer than one page, handle pagination
+      if (imgHeight > 297) { // A4 height in mm
+        let position = 0;
+        let pageHeight = 297;
+        
+        while (position < imgHeight) {
+          pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
+          position += pageHeight;
+          
+          if (position < imgHeight) {
+            pdf.addPage();
+          }
+        }
+      } else {
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      }
+      
+      // Download the PDF
+      pdf.save(`improved-resume-${candidateName}-${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      throw new Error('Failed to generate PDF from HTML');
+    }
+  };
+
   const handleBuildResume = async () => {
     if (!originalResumeText) {
       alert('Original resume text not available');
@@ -708,27 +772,12 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
 
       const data = await response.json();
       
-      if (data.pdfData) {
-        // Convert base64 to blob and download PDF
-        const pdfBytes = atob(data.pdfData);
-        const pdfArray = new Uint8Array(pdfBytes.length);
-        for (let i = 0; i < pdfBytes.length; i++) {
-          pdfArray[i] = pdfBytes.charCodeAt(i);
-        }
-        
-        const pdfBlob = new Blob([pdfArray], { type: 'application/pdf' });
-        const url = URL.createObjectURL(pdfBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `improved-resume-${new Date().toISOString().split('T')[0]}.pdf`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
+      if (data.htmlCode) {
+        // Generate PDF from HTML on client-side
+        await generatePDFFromHTML(data.htmlCode, data.candidateName);
         alert('Your improved resume PDF has been downloaded! The resume has been restructured using AI with your Level 1 improvements.');
       } else {
-        throw new Error('No PDF data received');
+        throw new Error('No HTML data received');
       }
     } catch (error) {
       console.error('Error generating resume:', error);

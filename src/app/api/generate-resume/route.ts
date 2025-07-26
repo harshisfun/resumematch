@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import puppeteer from 'puppeteer';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -225,34 +224,9 @@ Return ONLY the complete HTML code, ready for PDF conversion. Do not include any
       }, { status: 500 });
     }
 
-    // Generate PDF from HTML using Puppeteer
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    
-    const page = await browser.newPage();
-    await page.setContent(htmlCode, { waitUntil: 'networkidle0' });
-    
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      margin: {
-        top: '0.5in',
-        bottom: '0.5in',
-        left: '0.5in',
-        right: '0.5in'
-      },
-      printBackground: true
-    });
-    
-    await browser.close();
-
-    // Return PDF as base64 for download
-    const pdfBase64 = Buffer.from(pdfBuffer).toString('base64');
-
+    // Return HTML for client-side PDF generation
     return NextResponse.json({
-      pdfData: pdfBase64,
-      htmlCode: htmlCode, // Also return HTML for debugging
+      htmlCode: htmlCode,
       timestamp: new Date().toISOString(),
       candidateName: candidateName || "Resume",
     });

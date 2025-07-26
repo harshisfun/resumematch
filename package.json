@@ -17,11 +17,12 @@
   "dependencies": {
     "@mistralai/mistralai": "^1.7.5",
     "@types/next-auth": "^3.13.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "mammoth": "^1.9.1",
     "next": "15.4.1",
     "next-auth": "^4.24.11",
     "openai": "^5.9.2",
-    "puppeteer": "^24.15.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-dropzone": "^14.3.8"
