@@ -56,6 +56,18 @@ Carefully compare the candidate's resume against the job description, considerin
 * Role responsibilities and expectations
 * Career progression requirements
 
+CRITICAL REQUIREMENT FOR RESUME TRANSFORMATION EXAMPLES:
+1. Extract 3-5 actual bullet points from the candidate's resume (copy them exactly)
+2. Rewrite each bullet point to better align with the JD using:
+   - Job-relevant keywords from the JD
+   - "Accomplished [A] as measured by [B] by doing [C]" format
+   - Stronger action verbs
+   - Quantification where possible (estimate if needed)
+   - Industry-specific terminology
+3. For the skills section, take the actual skills listed and reorganize/enhance them
+4. If there's a summary/objective, rewrite it to better match the JD
+5. Always preserve factual accuracy - enhance presentation, don't fabricate new experiences
+
 Provide the analysis in the following JSON structure:
 
 {
@@ -118,24 +130,44 @@ Provide the analysis in the following JSON structure:
       "Severity": "Critical/Moderate/Minor"
     }
   ],
-  "Scope of Improvements": {
-    "Column A - Structural Resume Improvements": {
-      "Keyword Integration": [
-        "Specific industry and role-relevant keywords to add from JD"
-      ],
-      "Format Enhancement": [
-        "Specific bullet points to restructure using 'Accomplished [A] as measured by [B] by doing [C]' format"
-      ],
-      "Content Reframing": [
-        "Ways to better highlight existing experience to match JD requirements"
-      ],
-      "Section Optimization": [
-        "Recommendations for resume section reorganization or emphasis"
-      ],
-      "Quantification": [
-        "Areas where metrics and numbers should be added to existing achievements"
-      ]
-    },
+     "Scope of Improvements": {
+     "Column A - Structural Resume Improvements": {
+       "Keyword Integration": [
+         "Specific industry and role-relevant keywords to add from JD"
+       ],
+       "Format Enhancement": [
+         "Specific bullet points to restructure using 'Accomplished [A] as measured by [B] by doing [C]' format"
+       ],
+       "Content Reframing": [
+         "Ways to better highlight existing experience to match JD requirements"
+       ],
+       "Section Optimization": [
+         "Recommendations for resume section reorganization or emphasis"
+       ],
+       "Quantification": [
+         "Areas where metrics and numbers should be added to existing achievements"
+       ]
+     },
+     "Resume Transformation Examples": {
+       "Bullet Point Improvements": [
+         {
+           "Original": "Exact original bullet point from candidate's resume",
+           "Improved": "Enhanced version using suggestions and JD alignment",
+           "Improvements Applied": ["Keyword integration", "Quantification", "Action verb strengthening"],
+           "Impact": "Explanation of how this change improves JD alignment and ATS compatibility"
+         }
+       ],
+       "Skills Section Enhancement": {
+         "Original Skills List": "Current skills section from resume",
+         "Improved Skills List": "Reorganized and enhanced skills section with JD-relevant keywords",
+         "Changes Made": "Specific improvements made to skills presentation"
+       },
+       "Summary/Objective Rewrite": {
+         "Original": "Current summary/objective if present",
+         "Improved": "Enhanced version aligned with JD requirements",
+         "Key Changes": "Specific improvements made"
+       }
+     },
     "Column B - Long-term Career Development": {
       "Skills Development": [
         "Technical and soft skills to acquire for better role fit"

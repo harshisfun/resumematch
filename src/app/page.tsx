@@ -314,6 +314,32 @@ function extractCompetitivenessInsight(analysis: any) {
   return "Focus on highlighting technical skills and product experience to improve competitiveness.";
 }
 
+function extractResumeTransformations(analysis: any) {
+  try {
+    if (analysis["Scope of Improvements"]?.["Resume Transformation Examples"]) {
+      return analysis["Scope of Improvements"]["Resume Transformation Examples"];
+    }
+  } catch (error) {
+    console.error("Error extracting resume transformations:", error);
+  }
+  
+  return {
+    "Bullet Point Improvements": [
+      {
+        "Original": "Managed product development projects",
+        "Improved": "Led cross-functional product development initiatives for 3 key features, resulting in 25% increase in user engagement as measured by daily active users",
+        "Improvements Applied": ["Quantification", "Action verb strengthening", "Specific outcomes"],
+        "Impact": "Better demonstrates leadership and measurable business impact"
+      }
+    ],
+    "Skills Section Enhancement": {
+      "Original Skills List": "Python, SQL, Data Analysis, Project Management",
+      "Improved Skills List": "Technical Skills: Python, SQL, Machine Learning, Data Analytics | Product Management: Agile/Scrum, Product Lifecycle, Stakeholder Management | Tools: Tableau, JIRA, Git",
+      "Changes Made": "Categorized skills by relevance, added missing JD keywords, improved organization"
+    }
+  };
+}
+
 function FileUpload({ onFileSelect }: { onFileSelect: (file: File | null) => void }) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [error, setError] = useState<string>("");
@@ -717,7 +743,100 @@ function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => v
               </div>
             </div>
 
-            {/* 3. Scope of Improvements - Two Columns */}
+            {/* 3. Resume Transformation Examples */}
+            <div className="bg-gradient-to-r from-amber-900/20 to-yellow-900/20 border border-amber-700 rounded-lg p-6 mb-8">
+              <h3 className="text-2xl font-semibold mb-6 text-amber-400 flex items-center">
+                <span className="mr-3">✨</span>
+                Your Resume - Before vs After
+              </h3>
+              <p className="text-gray-300 mb-6">See how your resume bullet points can be transformed to better align with this role:</p>
+              
+              {(() => {
+                const transformations = extractResumeTransformations(analysis);
+                return (
+                  <div className="space-y-6">
+                    {/* Bullet Point Improvements */}
+                    {transformations["Bullet Point Improvements"] && transformations["Bullet Point Improvements"].length > 0 && (
+                      <div>
+                        <h4 className="text-xl font-semibold mb-4 text-amber-300">📝 Experience Bullet Points</h4>
+                        <div className="space-y-4">
+                          {transformations["Bullet Point Improvements"].map((improvement: any, index: number) => (
+                            <div key={index} className="bg-gray-800/50 rounded-lg p-4">
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                                  <h5 className="text-red-400 font-medium mb-2">❌ Original</h5>
+                                  <p className="text-gray-300 text-sm italic">"{improvement.Original}"</p>
+                                </div>
+                                <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
+                                  <h5 className="text-green-400 font-medium mb-2">✅ Improved</h5>
+                                  <p className="text-gray-300 text-sm font-medium">"{improvement.Improved}"</p>
+                                </div>
+                              </div>
+                              <div className="mt-3 pt-3 border-t border-gray-700">
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                  {improvement["Improvements Applied"] && improvement["Improvements Applied"].map((tag: string, tagIndex: number) => (
+                                    <span key={tagIndex} className="bg-amber-600/20 text-amber-300 px-2 py-1 rounded text-xs">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                                <p className="text-gray-400 text-xs">💡 {improvement.Impact}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Skills Section Enhancement */}
+                    {transformations["Skills Section Enhancement"] && (
+                      <div>
+                        <h4 className="text-xl font-semibold mb-4 text-amber-300">🎯 Skills Section</h4>
+                        <div className="bg-gray-800/50 rounded-lg p-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                              <h5 className="text-red-400 font-medium mb-2">❌ Original</h5>
+                              <p className="text-gray-300 text-sm">{transformations["Skills Section Enhancement"]["Original Skills List"]}</p>
+                            </div>
+                            <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
+                              <h5 className="text-green-400 font-medium mb-2">✅ Improved</h5>
+                              <p className="text-gray-300 text-sm font-medium">{transformations["Skills Section Enhancement"]["Improved Skills List"]}</p>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-700">
+                            <p className="text-gray-400 text-xs">💡 {transformations["Skills Section Enhancement"]["Changes Made"]}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Summary/Objective Rewrite */}
+                    {transformations["Summary/Objective Rewrite"] && transformations["Summary/Objective Rewrite"]["Original"] && (
+                      <div>
+                        <h4 className="text-xl font-semibold mb-4 text-amber-300">📋 Professional Summary</h4>
+                        <div className="bg-gray-800/50 rounded-lg p-4">
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                              <h5 className="text-red-400 font-medium mb-2">❌ Original</h5>
+                              <p className="text-gray-300 text-sm italic">"{transformations["Summary/Objective Rewrite"]["Original"]}"</p>
+                            </div>
+                            <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
+                              <h5 className="text-green-400 font-medium mb-2">✅ Improved</h5>
+                              <p className="text-gray-300 text-sm font-medium">"{transformations["Summary/Objective Rewrite"]["Improved"]}"</p>
+                            </div>
+                          </div>
+                          <div className="mt-3 pt-3 border-t border-gray-700">
+                            <p className="text-gray-400 text-xs">💡 {transformations["Summary/Objective Rewrite"]["Key Changes"]}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* 4. Scope of Improvements - Two Columns */}
             <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 border border-blue-700 rounded-lg p-6">
               <h3 className="text-2xl font-semibold mb-6 text-blue-400 flex items-center">
                 <span className="mr-3">🚀</span>
@@ -794,7 +913,7 @@ function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => v
               </div>
             </div>
 
-            {/* 4. Competitiveness Analysis */}
+            {/* 5. Competitiveness Analysis */}
             <div className="bg-gradient-to-r from-yellow-900/20 to-orange-900/20 border border-yellow-700 rounded-lg p-6">
               <h3 className="text-2xl font-semibold mb-6 text-yellow-400 flex items-center">
                 <span className="mr-3">📊</span>
