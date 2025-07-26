@@ -152,93 +152,133 @@ For each experience entry, use this format:
 - Enhance technical keywords based on Level 1 keyword recommendations
 - Reorganize content for maximum ATS compatibility
 
-RESUME FORMAT TO FOLLOW (Return as clean HTML format for PDF conversion):
+RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
 
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>[CANDIDATE_NAME] - Resume</title>
+    <title>Resume</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Times New Roman', serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             font-size: 11pt;
-            line-height: 1.4;
-            margin: 0.75in;
+            line-height: 1.5;
             color: #000;
+            background: #fff;
+            margin: 0.75in;
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
             border-bottom: 2px solid #000;
-            padding-bottom: 10px;
         }
         .name {
-            font-size: 24pt;
+            font-size: 26pt;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
         }
-        .contact {
-            font-size: 11pt;
-            margin-bottom: 3px;
+        .contact-info {
+            font-size: 10pt;
+            line-height: 1.3;
         }
         .section {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
         }
         .section-title {
-            font-size: 14pt;
+            font-size: 12pt;
             font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            padding-bottom: 3px;
             border-bottom: 1px solid #000;
-            margin-bottom: 8px;
-            padding-bottom: 2px;
+        }
+        .job-entry {
+            margin-bottom: 15px;
         }
         .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3px;
+            margin-bottom: 5px;
         }
-        .job-title {
+        .job-title-company {
             font-weight: bold;
-            font-size: 12pt;
+            font-size: 11pt;
+            margin-bottom: 2px;
         }
         .job-date {
             font-style: italic;
             font-size: 10pt;
+            color: #555;
+            float: right;
+            margin-top: -18px;
         }
-        .company {
-            font-style: italic;
-            margin-bottom: 5px;
-        }
-        .achievements {
+        .job-achievements {
+            list-style: none;
             margin-left: 0;
-            padding-left: 15px;
+            padding-left: 0;
         }
-        .achievements li {
-            margin-bottom: 3px;
+        .job-achievements li {
+            margin-bottom: 4px;
+            padding-left: 15px;
+            position: relative;
             text-align: justify;
         }
-        .skills-section {
-            display: flex;
-            flex-wrap: wrap;
+        .job-achievements li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        .skills-grid {
+            display: block;
         }
         .skill-category {
-            margin-right: 20px;
             margin-bottom: 8px;
+            line-height: 1.4;
         }
-        .skill-category strong {
+        .skill-label {
             font-weight: bold;
+            display: inline;
+        }
+        .skill-list {
+            display: inline;
+            font-weight: normal;
+        }
+        .education-entry {
+            margin-bottom: 10px;
+        }
+        .degree-info {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        .university-info {
+            font-style: italic;
+            margin-bottom: 2px;
+        }
+        .education-date {
+            font-size: 10pt;
+            color: #555;
+            float: right;
+            margin-top: -18px;
         }
         @media print {
             body { margin: 0.5in; }
+            .section { page-break-inside: avoid; }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="name">[CANDIDATE_NAME]</div>
-        <div class="contact">[CONTACT_INFORMATION]</div>
+        <div class="contact-info">[CONTACT_INFORMATION]</div>
     </div>
 
     [RESUME_SECTIONS]
@@ -246,31 +286,56 @@ RESUME FORMAT TO FOLLOW (Return as clean HTML format for PDF conversion):
 </body>
 </html>
 
-TRANSFORMATION INSTRUCTIONS:
-1. Replace [CANDIDATE_NAME] with the extracted candidate name: "${finalCandidateName}"
-2. Replace [CONTACT_INFORMATION] with the extracted contact details: "${finalContactInfo}"
-3. Replace [RESUME_SECTIONS] with optimized sections following this priority order:
-   - Professional Summary (if exists) - enhance with Level 1 keywords
-   - Experience (most important) - apply "Accomplished [A] as measured by [B] by doing [C]" format
-   - Skills - reorganize based on Level 1 recommendations
-   - Education - maintain factual accuracy
-   - Projects/Certifications - if relevant to target role
+FILL THE TEMPLATE EXACTLY AS FOLLOWS:
+1. Replace [CANDIDATE_NAME] with: ${finalCandidateName}
+2. Replace [CONTACT_INFORMATION] with: ${finalContactInfo}
+3. Replace [RESUME_SECTIONS] with the sections below using EXACT classes:
 
-EXPERIENCE BULLET TRANSFORMATION RULES:
-For each experience bullet, follow this exact format:
-- "Accomplished [A] as measured by [B] by doing [C]"
-- [A] = The achievement/result (what was accomplished)
-- [B] = The quantified measurement (metrics, percentages, numbers)
-- [C] = The method/process used (how it was done)
+PROFESSIONAL SUMMARY SECTION (if exists):
+<div class="section">
+    <div class="section-title">Professional Summary</div>
+    <p>Enhanced summary with Level 1 keywords...</p>
+</div>
 
-SECTION FORMATTING:
-- Use <div class="section"> for each section
-- Use <div class="section-title"> for section headers
-- Use <div class="job-header"> for job titles and dates
-- Use <ul class="achievements"> for bullet points
-- Maintain professional, clean formatting
+EXPERIENCE SECTION:
+<div class="section">
+    <div class="section-title">Professional Experience</div>
+    <div class="job-entry">
+        <div class="job-header">
+            <div class="job-title-company">Job Title - Company Name</div>
+            <div class="job-date">Start Date - End Date</div>
+        </div>
+        <ul class="job-achievements">
+            <li>Accomplished [specific result] as measured by [quantified metric] by doing [specific method/action]</li>
+            <li>Accomplished [specific result] as measured by [quantified metric] by doing [specific method/action]</li>
+        </ul>
+    </div>
+</div>
 
-Return ONLY the complete HTML resume, properly formatted and ready for PDF conversion.
+SKILLS SECTION:
+<div class="section">
+    <div class="section-title">Relevant Skills</div>
+    <div class="skills-grid">
+        <div class="skill-category">
+            <span class="skill-label">Category:</span>
+            <span class="skill-list">Skill1, Skill2, Skill3</span>
+        </div>
+    </div>
+</div>
+
+EDUCATION SECTION:
+<div class="section">
+    <div class="section-title">Education</div>
+    <div class="education-entry">
+        <div class="degree-info">Degree Name</div>
+        <div class="university-info">University Name, Location</div>
+        <div class="education-date">Start Year - End Year</div>
+    </div>
+</div>
+
+CRITICAL: Return ONLY the complete HTML document starting with <!DOCTYPE html> and ending with </html>. 
+Do NOT include any explanatory text, markdown formatting, or additional comments outside the HTML.
+The response must be pure HTML code that can be directly rendered.
 
 Examples of proper transformation:
 BEFORE: "Worked on various marketing campaigns"
@@ -304,7 +369,7 @@ Return ONLY the complete HTML code, ready for PDF conversion. Do not include any
       messages: [
         {
           role: "system",
-          content: "You are a professional resume writer and HTML expert. Generate complete, well-formatted HTML that transforms resumes while maintaining factual accuracy. Return ONLY clean HTML code."
+          content: "You are a professional resume writer and HTML expert. Transform resumes using the provided template while maintaining factual accuracy. Your response must be ONLY the filled HTML template with no additional text, explanations, or markdown formatting."
         },
         {
           role: "user",
