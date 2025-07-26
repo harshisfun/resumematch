@@ -171,12 +171,13 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             line-height: 1.5;
             color: #000;
             background: #fff;
-            margin: 0.75in;
+            margin: 1in;
+            padding: 0.25in;
         }
         .header {
             text-align: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
+            margin-bottom: 30px;
+            padding: 15px 20px;
             border-bottom: 2px solid #000;
         }
         .name {
@@ -190,7 +191,8 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             line-height: 1.3;
         }
         .section {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            padding: 0 10px;
             page-break-inside: avoid;
         }
         .section-title {
@@ -198,12 +200,13 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 10px;
-            padding-bottom: 3px;
+            margin-bottom: 12px;
+            padding: 5px 0;
             border-bottom: 1px solid #000;
         }
         .job-entry {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            padding: 8px 0;
         }
         .job-header {
             margin-bottom: 5px;
@@ -226,10 +229,12 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             padding-left: 0;
         }
         .job-achievements li {
-            margin-bottom: 4px;
-            padding-left: 15px;
+            margin-bottom: 6px;
+            padding-left: 18px;
+            padding-right: 5px;
             position: relative;
             text-align: justify;
+            line-height: 1.4;
         }
         .job-achievements li:before {
             content: "•";
@@ -239,9 +244,11 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
         }
         .skills-grid {
             display: block;
+            padding: 5px 0;
         }
         .skill-category {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            padding: 3px 0;
             line-height: 1.4;
         }
         .skill-label {
@@ -253,7 +260,8 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             font-weight: normal;
         }
         .education-entry {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            padding: 5px 0;
         }
         .degree-info {
             font-weight: bold;
@@ -270,8 +278,17 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             margin-top: -18px;
         }
         @media print {
-            body { margin: 0.5in; }
-            .section { page-break-inside: avoid; }
+            body { 
+                margin: 0.75in; 
+                padding: 0.25in;
+            }
+            .section { 
+                page-break-inside: avoid; 
+                padding: 0 5px;
+            }
+            .header {
+                padding: 10px 15px;
+            }
         }
     </style>
 </head>
