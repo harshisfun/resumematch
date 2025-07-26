@@ -761,8 +761,9 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
         body: JSON.stringify({
           resumeText: originalResumeText,
           level1Improvements,
-          candidateName: 'Candidate Name', // Extract from resume if available
-          contactInfo: 'candidate@email.com', // Extract from resume if available
+          // Let the API extract these from the original resume text
+          candidateName: null,
+          contactInfo: null,
         }),
       });
 

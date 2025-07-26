@@ -7,6 +7,92 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+function extractCandidateInfo(resumeText: string) {
+  const info = {
+    name: '',
+    contact: '',
+    email: '',
+    phone: '',
+    location: '',
+    linkedin: '',
+    github: ''
+  };
+
+  // Extract name - typically at the beginning of resume, often in all caps or title case
+  const namePatterns = [
+    /^([A-Z][a-z]+ [A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/m, // First line name
+    /^([A-Z\s]{3,50})\s*$/m, // All caps name
+    /Name:\s*([^\n\r]+)/i, // "Name: John Doe" format
+  ];
+  
+  for (const pattern of namePatterns) {
+    const nameMatch = resumeText.match(pattern);
+    if (nameMatch && nameMatch[1]) {
+      info.name = nameMatch[1].trim();
+      break;
+    }
+  }
+
+  // Extract email
+  const emailMatch = resumeText.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
+  if (emailMatch) {
+    info.email = emailMatch[1];
+  }
+
+  // Extract phone number
+  const phonePatterns = [
+    /(\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4})/,
+    /(\+?[0-9]{1,3}[-.\s]?[0-9]{3,4}[-.\s]?[0-9]{3,4}[-.\s]?[0-9]{3,4})/
+  ];
+  
+  for (const pattern of phonePatterns) {
+    const phoneMatch = resumeText.match(pattern);
+    if (phoneMatch) {
+      info.phone = phoneMatch[1].trim();
+      break;
+    }
+  }
+
+  // Extract LinkedIn
+  const linkedinMatch = resumeText.match(/(?:linkedin\.com\/in\/|linkedin\.com\/profile\/view\?id=)([^\s\n\r,]+)/i);
+  if (linkedinMatch) {
+    info.linkedin = `linkedin.com/in/${linkedinMatch[1]}`;
+  }
+
+  // Extract GitHub
+  const githubMatch = resumeText.match(/(?:github\.com\/)([^\s\n\r,]+)/i);
+  if (githubMatch) {
+    info.github = `github.com/${githubMatch[1]}`;
+  }
+
+  // Extract location/address
+  const locationPatterns = [
+    /([A-Za-z\s]+,\s*[A-Z]{2}(?:\s+[0-9]{5})?)/,  // City, State ZIP
+    /([A-Za-z\s]+,\s*[A-Za-z\s]+,\s*[A-Za-z\s]+)/, // City, State, Country
+    /Location:\s*([^\n\r]+)/i, // "Location: ..." format
+  ];
+  
+  for (const pattern of locationPatterns) {
+    const locationMatch = resumeText.match(pattern);
+    if (locationMatch && locationMatch[1]) {
+      info.location = locationMatch[1].trim();
+      break;
+    }
+  }
+
+  // Build contact string
+  const contactParts = [];
+  if (info.location) contactParts.push(info.location);
+  if (info.email) contactParts.push(info.email);
+  if (info.phone) contactParts.push(info.phone);
+  if (info.linkedin) contactParts.push(info.linkedin);
+  if (info.github) contactParts.push(info.github);
+  
+  info.contact = contactParts.join(' | ');
+
+  return info;
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
@@ -25,6 +111,11 @@ export async function POST(request: NextRequest) {
         error: 'Resume text and Level 1 improvements are required' 
       }, { status: 400 });
     }
+
+    // Extract candidate information from the original resume
+    const extractedInfo = extractCandidateInfo(resumeText);
+    const finalCandidateName = candidateName || extractedInfo.name || "Professional Candidate";
+    const finalContactInfo = contactInfo || extractedInfo.contact || "your@email.com";
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json({ 
@@ -48,8 +139,9 @@ ${resumeText}
 Level 1 Improvements to Implement:
 ${JSON.stringify(level1Improvements, null, 2)}
 
-Candidate Name: ${candidateName || "Professional Candidate"}
-Contact Information: ${contactInfo || "Update contact information"}
+Candidate Name: ${finalCandidateName}
+Contact Information: ${finalContactInfo}
+Extracted Info: ${JSON.stringify(extractedInfo, null, 2)}
 
 TASK:
 Transform the resume into a clean, professional format with the following structure. Extract information from the original resume and restructure it according to Level 1 improvements.
@@ -155,8 +247,8 @@ RESUME FORMAT TO FOLLOW (Return as clean HTML format for PDF conversion):
 </html>
 
 TRANSFORMATION INSTRUCTIONS:
-1. Replace [CANDIDATE_NAME] with the actual candidate name from input
-2. Replace [CONTACT_INFORMATION] with properly formatted contact details (email, phone, location, LinkedIn, etc.)
+1. Replace [CANDIDATE_NAME] with the extracted candidate name: "${finalCandidateName}"
+2. Replace [CONTACT_INFORMATION] with the extracted contact details: "${finalContactInfo}"
 3. Replace [RESUME_SECTIONS] with optimized sections following this priority order:
    - Professional Summary (if exists) - enhance with Level 1 keywords
    - Experience (most important) - apply "Accomplished [A] as measured by [B] by doing [C]" format
@@ -197,6 +289,13 @@ QUALITY ASSURANCE:
 - ONLY enhance presentation of existing facts
 - Preserve all chronological information exactly as provided
 - Maintain professional tone throughout
+
+IMPORTANT EXTRACTION RULES:
+1. Extract actual dates from the original resume - do not use placeholder dates like "[Dates]"
+2. Use the exact candidate name and contact information from the original resume
+3. Preserve all factual information while improving presentation
+4. If contact information is incomplete, use only what is available
+5. Maintain chronological accuracy for all dates and durations
 
 Return ONLY the complete HTML code, ready for PDF conversion. Do not include any explanations or comments outside the HTML document.`;
 
