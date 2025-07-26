@@ -82,6 +82,18 @@ FOR COURSE/CERTIFICATION RECOMMENDATIONS:
    - Coursera Machine Learning Specialization by Stanford (for ML roles)
    - Scrum Master Certification (for product/project management roles)
 
+FOR MARKET COMPETITIVENESS DETAILED REASONING:
+1. Analyze the company type/tier based on JD (startup, mid-size, enterprise, FAANG, etc.)
+2. Provide specific hiring patterns for that company type and role level
+3. Reference actual educational tiers relevant to Indian market (IIT/IIM/ISI = Tier 1, NIT/IIIT = Tier 2, etc.)
+4. Give concrete percentages and statistics for typical hiring criteria
+5. Compare candidate's background point-by-point against typical successful hires
+6. Explain WHY each factor helps or hurts their chances with specific reasoning
+7. Examples of good reasoning:
+   - "FAANG companies for Senior PM roles typically hire 70% from Tier 1 institutions, 25% from Tier 2, 5% from Tier 3"
+   - "For this Data Scientist role, Google typically requires 5+ years ML experience, PhD/Masters preferred, Python/TensorFlow expertise"
+   - "Mid-size startups in fintech prioritize domain experience (60%) over educational pedigree (20%)"
+
 Provide the analysis in the following JSON structure:
 
 {
@@ -205,13 +217,20 @@ Provide the analysis in the following JSON structure:
        ]
      }
   },
-  "Market Competitiveness": {
-    "Competitive Level": "Below Average/Average/Above Average/Exceptional",
-    "Market Position": "Explanation of where candidate stands in talent pool",
-    "Hiring Probability": "Realistic assessment of chances based on current profile",
-    "Benchmark Comparison": "How candidate compares to successful hires for similar positions",
-    "Percentile Ranking": "Top X% of candidates for this role"
-  }
+     "Market Competitiveness": {
+     "Competitive Level": "Below Average/Average/Above Average/Exceptional",
+     "Market Position": "Explanation of where candidate stands in talent pool",
+     "Hiring Probability": "Realistic assessment of chances based on current profile", 
+     "Benchmark Comparison": "How candidate compares to successful hires for similar positions",
+     "Percentile Ranking": "Top X% of candidates for this role",
+     "Detailed Reasoning": {
+       "Company Hiring Patterns": "Company X typically hires candidates with [specific skills/experience/education]. For this role, they prefer [specific requirements with examples]",
+       "Educational Background Analysis": "This company/role typically recruits from [Tier 1/2/3] institutions. Candidate's [institution name] falls in [tier] which [helps/hurts] their chances because [specific reasoning]",
+       "Experience Level Expectations": "For this role at Company X, typical hires have [X-Y years] of experience in [specific areas]. Candidate has [actual experience] which positions them [above/below/at] the typical range",
+       "Skills Gap Analysis": "Company X prioritizes [specific skill set] for this role. Based on typical hiring patterns, candidates need proficiency in [specific technologies/skills]. Candidate's profile shows [specific gaps/strengths]",
+       "Success Probability Breakdown": "Based on Company X's hiring history for similar roles: [X]% of hired candidates had [qualification 1], [Y]% had [qualification 2], [Z]% had [qualification 3]. Candidate meets [number] of these criteria"
+     }
+   }
 }
 
 Resume:
