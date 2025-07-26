@@ -246,6 +246,34 @@ function extractCourseRecommendations(analysis: any) {
   ];
 }
 
+function extractLevel1Improvements(analysis: any) {
+  try {
+    // Try new structure first - Scope of Improvements -> Column A
+    if (analysis["Scope of Improvements"]?.["Column A - Structural Resume Improvements"]) {
+      return analysis["Scope of Improvements"]["Column A - Structural Resume Improvements"];
+    }
+    
+    // Try Resume Transformation Examples
+    if (analysis["Scope of Improvements"]?.["Resume Transformation Examples"]) {
+      return analysis["Scope of Improvements"]["Resume Transformation Examples"];
+    }
+    
+    // Fallback to old structure
+    if (analysis["Level 1 - Immediate Resume Optimization"]) {
+      return analysis["Level 1 - Immediate Resume Optimization"];
+    }
+  } catch (error) {
+    console.error("Error extracting Level 1 improvements:", error);
+  }
+  
+  return {
+    "Keyword Integration": "Add role-relevant keywords from job description",
+    "Format Enhancement": "Restructure bullet points using 'Accomplished [A] as measured by [B] by doing [C]' format",
+    "Content Reframing": "Better highlight existing experience to match requirements",
+    "Section Optimization": "Reorganize resume sections for maximum impact"
+  };
+}
+
 function extractExperienceRecommendations(analysis: any) {
   const experiences = [];
   try {
@@ -610,8 +638,9 @@ interface AnalysisResult {
 }
 
 /* eslint-disable */
-function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => void }) {
+function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: any; onBack: () => void; originalResumeText: string }) {
   const [isExporting, setIsExporting] = useState(false);
+  const [isGeneratingResume, setIsGeneratingResume] = useState(false);
   
   // Extract match score from new structure
   let matchScore = 75; // Default fallback
@@ -649,6 +678,56 @@ function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => v
     alert('PDF export feature coming soon!');
   };
 
+  const handleBuildResume = async () => {
+    if (!originalResumeText) {
+      alert('Original resume text not available');
+      return;
+    }
+
+    setIsGeneratingResume(true);
+    try {
+      // Extract Level 1 improvements from analysis
+      const level1Improvements = extractLevel1Improvements(analysis);
+      
+      const response = await fetch('/api/generate-resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resumeText: originalResumeText,
+          level1Improvements,
+          candidateName: 'Candidate Name', // Extract from resume if available
+          contactInfo: 'candidate@email.com', // Extract from resume if available
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate resume');
+      }
+
+      const data = await response.json();
+      
+      // Create and download the LaTeX file
+      const latexBlob = new Blob([data.latexCode], { type: 'text/plain' });
+      const url = URL.createObjectURL(latexBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `improved-resume-${new Date().toISOString().split('T')[0]}.tex`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      alert('Your improved resume LaTeX file has been downloaded! You can compile it to PDF using Overleaf or a local LaTeX compiler.');
+    } catch (error) {
+      console.error('Error generating resume:', error);
+      alert('Failed to generate resume. Please try again.');
+    } finally {
+      setIsGeneratingResume(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -668,6 +747,20 @@ function ResultsDashboard({ analysis, onBack }: { analysis: any; onBack: () => v
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
               >
                 Export PDF
+              </button>
+              <button
+                onClick={handleBuildResume}
+                disabled={isGeneratingResume}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isGeneratingResume ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                    Generating...
+                  </>
+                ) : (
+                  '🚀 Build Resume'
+                )}
               </button>
               <button
                 onClick={onBack}
@@ -1070,6 +1163,7 @@ function Dashboard() {
   const [jobDescription, setJobDescription] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [resumeText, setResumeText] = useState<string>("");
   const [rateLimitInfo, setRateLimitInfo] = useState<{ allowed: boolean; remaining: number; resetTime?: string } | null>(null);
   const [loadingRateLimit, setLoadingRateLimit] = useState(true);
 
@@ -1139,7 +1233,8 @@ function Dashboard() {
         }
       }
       
-      const { text: resumeText } = await extractResponse.json();
+      const { text: extractedResumeText } = await extractResponse.json();
+      setResumeText(extractedResumeText); // Store the extracted text
       
       // Step 2: Send to OpenAI for analysis
       const analysisResponse = await fetch('/api/analyze', {
@@ -1148,7 +1243,7 @@ function Dashboard() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          resumeText,
+          resumeText: extractedResumeText,
           jobDescription: jobDescription.trim(),
         }),
       });
@@ -1181,7 +1276,7 @@ function Dashboard() {
 
   // Show results if available
   if (analysisResult) {
-    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} />;
+    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} />;
   }
 
   return (
