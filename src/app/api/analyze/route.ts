@@ -46,7 +46,36 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are an expert resume analyzer and career consultant. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide structured feedback in the format specified below.
+    const prompt = `You are an expert resume analyzer and career consultant. Your task is to conduct a comprehensive section-wise analysis of a candidate's resume against a specific job description and provide detailed feedback with individual scoring for each resume element.
+
+SECTION-WISE ANALYSIS REQUIREMENTS:
+
+1. PROFESSIONAL EXPERIENCE ANALYSIS:
+   - Extract EVERY bullet point from each job/role in the resume
+   - Score each bullet point individually (0-10) based on:
+     * Impact and quantification (30%)
+     * Relevance to target JD (25%)
+     * Action verb strength (20%)
+     * Clarity and specificity (15%)
+     * Keyword alignment (10%)
+   - Provide improved version of each bullet point using "Accomplished [A] as measured by [B] by doing [C]" format
+   - Explain what improvements were made (action verbs, quantification, keywords, etc.)
+
+2. SKILLS SECTION ANALYSIS:
+   - Evaluate current skills presentation and organization
+   - Reorganize skills into relevant categories with JD keywords
+   - Identify missing skills from JD requirements
+   - Score the overall skills section presentation
+
+3. EDUCATION SECTION ANALYSIS:
+   - Assess educational background relevance to role
+   - Suggest improvements in presentation
+   - Score based on relevance and presentation
+
+4. OTHER SECTIONS (Projects, Summary, etc.):
+   - Analyze each section if present
+   - Provide specific improvement suggestions
+   - Individual scoring for each section
 
 Analysis Instructions:
 Carefully compare the candidate's resume against the job description, considering:
@@ -98,6 +127,47 @@ Provide the analysis in the following JSON structure:
 
 {
   "Overall Candidacy Score": [0-100 numeric value],
+  "Section Wise Analysis": {
+    "Professional Experience": {
+      "Overall Section Score": [0-10],
+      "Bullet Points Analysis": [
+        {
+          "Original Text": "Exact bullet point from resume",
+          "Score": [0-10],
+          "Score Reasoning": "Why this score was given",
+          "Improved Version": "Rewritten bullet point using 'Accomplished [A] as measured by [B] by doing [C]' format",
+          "Improvements Applied": ["Action Verb Enhancement", "Quantification Added", "Keywords Integrated", "Impact Clarified"],
+          "JD Alignment": "How this relates to job requirements"
+        }
+      ]
+    },
+    "Education": {
+      "Overall Section Score": [0-10],
+      "Analysis": "Assessment of educational background vs JD requirements",
+      "Improvements": "Suggestions for better presentation of education"
+    },
+    "Skills": {
+      "Overall Section Score": [0-10],
+      "Current Skills Presentation": "How skills are currently listed",
+      "Improved Skills Organization": {
+        "Technical Skills": ["List of reorganized technical skills with JD keywords"],
+        "Soft Skills": ["List of relevant soft skills"],
+        "Tools & Technologies": ["List of tools/platforms"]
+      },
+      "Missing Skills": ["Skills mentioned in JD but not in resume"]
+    },
+    "Projects": {
+      "Overall Section Score": [0-10],
+      "Analysis": "Assessment of projects section if present",
+      "Suggestions": "How to better present projects"
+    },
+    "Summary/Objective": {
+      "Score": [0-10],
+      "Current Version": "Current summary/objective from resume",
+      "Improved Version": "Rewritten summary targeting the specific role",
+      "Improvements": "What was enhanced"
+    }
+  },
   "Score Breakdown": {
     "Years of Relevant Experience": {
       "Score": [0-25 points],

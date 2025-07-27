@@ -877,8 +877,178 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
           </div>
         </div>
 
-        {/* Structured Analysis Sections */}
-        {analysis && Object.keys(analysis).length > 0 && (
+        {/* Section-Wise Analysis */}
+        {analysis && analysis["Section Wise Analysis"] && (
+          <div className="space-y-8">
+            {/* Professional Experience Section */}
+            <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 border border-blue-700 rounded-lg p-6">
+              <h3 className="text-2xl font-semibold mb-6 text-blue-400 flex items-center">
+                <span className="mr-3">💼</span>
+                Professional Experience
+                <span className="ml-auto bg-blue-600/20 text-blue-300 px-3 py-1 rounded-full text-sm">
+                  Score: {analysis["Section Wise Analysis"]["Professional Experience"]?.["Overall Section Score"] || "N/A"}/10
+                </span>
+              </h3>
+              
+              {analysis["Section Wise Analysis"]["Professional Experience"]?.["Bullet Points Analysis"] && (
+                <div className="space-y-4">
+                  {analysis["Section Wise Analysis"]["Professional Experience"]["Bullet Points Analysis"].map((bullet: any, index: number) => (
+                    <div key={index} className="bg-gray-800/30 rounded-lg p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <h4 className="text-blue-300 font-medium">Experience Point {index + 1}</h4>
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            bullet.Score >= 8 ? 'bg-green-600/20 text-green-300' :
+                            bullet.Score >= 6 ? 'bg-yellow-600/20 text-yellow-300' :
+                            'bg-red-600/20 text-red-300'
+                          }`}>
+                            {bullet.Score}/10
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                        <div className="bg-red-900/20 border border-red-700 rounded-lg p-3">
+                          <h5 className="text-red-400 font-medium mb-2">❌ Original</h5>
+                          <p className="text-gray-300 text-sm">{bullet["Original Text"]}</p>
+                        </div>
+                        <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
+                          <h5 className="text-green-400 font-medium mb-2">✅ Improved</h5>
+                          <p className="text-gray-300 text-sm">{bullet["Improved Version"]}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="text-xs text-gray-400 mb-2">
+                        <strong>Score Reasoning:</strong> {bullet["Score Reasoning"]}
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {bullet["Improvements Applied"] && bullet["Improvements Applied"].map((improvement: string, impIndex: number) => (
+                          <span key={impIndex} className="bg-blue-600/20 text-blue-300 px-2 py-1 rounded text-xs">
+                            {improvement}
+                          </span>
+                        ))}
+                      </div>
+                      
+                      <div className="text-xs text-gray-400">
+                        <strong>JD Alignment:</strong> {bullet["JD Alignment"]}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Skills Section */}
+            {analysis["Section Wise Analysis"]["Skills"] && (
+              <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-700 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-6 text-purple-400 flex items-center">
+                  <span className="mr-3">🎯</span>
+                  Skills Assessment
+                  <span className="ml-auto bg-purple-600/20 text-purple-300 px-3 py-1 rounded-full text-sm">
+                    Score: {analysis["Section Wise Analysis"]["Skills"]["Overall Section Score"]}/10
+                  </span>
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="text-purple-300 font-medium mb-4">📋 Current Skills Organization</h4>
+                    <div className="bg-gray-800/30 rounded-lg p-4">
+                      <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Skills"]["Current Skills Presentation"]}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h4 className="text-purple-300 font-medium mb-4">🔧 Improved Skills Structure</h4>
+                    <div className="space-y-3">
+                      {analysis["Section Wise Analysis"]["Skills"]["Improved Skills Organization"] && 
+                        Object.entries(analysis["Section Wise Analysis"]["Skills"]["Improved Skills Organization"]).map(([category, skills]: [string, any]) => (
+                          <div key={category} className="bg-gray-800/30 rounded-lg p-3">
+                            <h5 className="text-purple-300 font-medium text-sm mb-2">{category}</h5>
+                            <p className="text-gray-300 text-xs">{Array.isArray(skills) ? skills.join(", ") : skills}</p>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {analysis["Section Wise Analysis"]["Skills"]["Missing Skills"] && 
+                  analysis["Section Wise Analysis"]["Skills"]["Missing Skills"].length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-red-300 font-medium mb-4">❌ Missing Skills from JD</h4>
+                    <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+                      <div className="flex flex-wrap gap-2">
+                        {analysis["Section Wise Analysis"]["Skills"]["Missing Skills"].map((skill: string, index: number) => (
+                          <span key={index} className="bg-red-600/20 text-red-300 px-2 py-1 rounded text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Education Section */}
+            {analysis["Section Wise Analysis"]["Education"] && (
+              <div className="bg-gradient-to-r from-teal-900/20 to-cyan-900/20 border border-teal-700 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-6 text-teal-400 flex items-center">
+                  <span className="mr-3">🎓</span>
+                  Education Assessment
+                  <span className="ml-auto bg-teal-600/20 text-teal-300 px-3 py-1 rounded-full text-sm">
+                    Score: {analysis["Section Wise Analysis"]["Education"]["Overall Section Score"]}/10
+                  </span>
+                </h3>
+                
+                <div className="space-y-4">
+                  <div className="bg-gray-800/30 rounded-lg p-4">
+                    <h4 className="text-teal-300 font-medium mb-2">📊 Analysis</h4>
+                    <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Education"]["Analysis"]}</p>
+                  </div>
+                  
+                  <div className="bg-gray-800/30 rounded-lg p-4">
+                    <h4 className="text-teal-300 font-medium mb-2">💡 Improvements</h4>
+                    <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Education"]["Improvements"]}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Summary/Objective Section */}
+            {analysis["Section Wise Analysis"]["Summary/Objective"] && (
+              <div className="bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-700 rounded-lg p-6">
+                <h3 className="text-2xl font-semibold mb-6 text-orange-400 flex items-center">
+                  <span className="mr-3">📝</span>
+                  Professional Summary
+                  <span className="ml-auto bg-orange-600/20 text-orange-300 px-3 py-1 rounded-full text-sm">
+                    Score: {analysis["Section Wise Analysis"]["Summary/Objective"]["Score"]}/10
+                  </span>
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-red-900/20 border border-red-700 rounded-lg p-4">
+                    <h4 className="text-red-400 font-medium mb-2">❌ Current Version</h4>
+                    <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Summary/Objective"]["Current Version"]}</p>
+                  </div>
+                  
+                  <div className="bg-green-900/20 border border-green-700 rounded-lg p-4">
+                    <h4 className="text-green-400 font-medium mb-2">✅ Improved Version</h4>
+                    <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Summary/Objective"]["Improved Version"]}</p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 bg-gray-800/30 rounded-lg p-4">
+                  <h4 className="text-orange-300 font-medium mb-2">🔧 Improvements Made</h4>
+                  <p className="text-gray-300 text-sm">{analysis["Section Wise Analysis"]["Summary/Objective"]["Improvements"]}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Original Structured Analysis Sections (fallback) */}
+        {analysis && Object.keys(analysis).length > 0 && !analysis["Section Wise Analysis"] && (
           <div className="space-y-8">
             {/* 1. Strengths Section */}
             <div className="bg-gradient-to-r from-green-900/20 to-emerald-900/20 border border-green-700 rounded-lg p-6">
