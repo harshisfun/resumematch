@@ -213,45 +213,48 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             box-sizing: border-box;
         }
                  body {
-             font-family: 'Calibri', 'Arial', sans-serif;
+             font-family: 'Segoe UI', 'Arial', sans-serif;
              font-size: 11pt;
-             line-height: 1.4;
+             line-height: 1.5;
              color: #2c3e50;
-             background: #fff;
+             background: #ffffff;
              margin: 0.75in;
-             padding: 0.5in;
+             padding: 0;
              max-width: 8.5in;
          }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 15px 20px;
-            border-bottom: 2px solid #000;
-        }
-        .name {
-            font-size: 26pt;
-            font-weight: bold;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-        .contact-info {
-            font-size: 10pt;
-            line-height: 1.3;
-        }
-        .section {
-            margin-bottom: 25px;
-            padding: 0 10px;
-            page-break-inside: avoid;
-        }
-        .section-title {
-            font-size: 12pt;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            padding: 5px 0;
-            border-bottom: 1px solid #000;
-        }
+                 .header {
+             text-align: center;
+             margin-bottom: 32px;
+             padding-bottom: 20px;
+             border-bottom: 3px solid #34495e;
+         }
+                 .name {
+             font-size: 28pt;
+             font-weight: 700;
+             margin-bottom: 12px;
+             letter-spacing: 1px;
+             color: #2c3e50;
+         }
+                 .contact-info {
+             font-size: 11pt;
+             line-height: 1.4;
+             color: #555;
+             font-weight: 400;
+         }
+                 .section {
+             margin-bottom: 28px;
+             page-break-inside: avoid;
+         }
+                 .section-title {
+             font-size: 14pt;
+             font-weight: 700;
+             text-transform: uppercase;
+             letter-spacing: 1.5px;
+             margin-bottom: 16px;
+             padding-bottom: 8px;
+             border-bottom: 2px solid #bdc3c7;
+             color: #2c3e50;
+         }
         .job-entry {
             margin-bottom: 18px;
             padding: 8px 0;
