@@ -638,9 +638,11 @@ interface AnalysisResult {
 }
 
 /* eslint-disable */
-function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: any; onBack: () => void; originalResumeText: string }) {
+function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDescription }: { analysis: any; onBack: () => void; originalResumeText: string; originalJobDescription: string }) {
   const [isExporting, setIsExporting] = useState(false);
   const [isGeneratingResume, setIsGeneratingResume] = useState(false);
+  const [isGeneratingAdvancedResume, setIsGeneratingAdvancedResume] = useState(false);
+  const [resumeVersions, setResumeVersions] = useState<any[]>([]);
   
   // Extract match score from new structure
   let matchScore = 75; // Default fallback
@@ -788,6 +790,58 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
     }
   };
 
+  const handleAdvancedResume = async () => {
+    if (!originalResumeText) {
+      alert('Original resume text not available');
+      return;
+    }
+
+    setIsGeneratingAdvancedResume(true);
+    try {
+      const level1Improvements = extractLevel1Improvements(analysis);
+      
+      const response = await fetch('/api/generate-resume-advanced', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          resumeText: originalResumeText,
+          jobDescription: originalJobDescription || '',
+          level1Improvements,
+          candidateName: null,
+          contactInfo: null,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate advanced resume versions');
+      }
+
+      const data = await response.json();
+      
+      if (data.resumeVersions && data.resumeVersions.length > 0) {
+        setResumeVersions(data.resumeVersions);
+        
+        // Generate PDFs for all versions
+        for (const version of data.resumeVersions) {
+          if (version.htmlCode) {
+            await generatePDFFromHTML(version.htmlCode, `${data.candidateName}-${version.name.replace(/\s+/g, '-')}`);
+          }
+        }
+        
+        alert(`✨ Advanced Resume Builder Complete!\n\n🎯 Generated ${data.resumeVersions.length} optimized versions:\n${data.resumeVersions.map(v => `• ${v.name}`).join('\n')}\n\nAll versions have been downloaded as PDFs. Each is strategically optimized for different scenarios!`);
+      } else {
+        throw new Error('No resume versions generated');
+      }
+    } catch (error) {
+      console.error('Error generating advanced resume:', error);
+      alert('Failed to generate advanced resume versions. Please try again.');
+    } finally {
+      setIsGeneratingAdvancedResume(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -820,6 +874,20 @@ function ResultsDashboard({ analysis, onBack, originalResumeText }: { analysis: 
                   </>
                 ) : (
                   '🚀 Build Resume'
+                )}
+              </button>
+              <button
+                onClick={handleAdvancedResume}
+                disabled={isGeneratingAdvancedResume}
+                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-4 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isGeneratingAdvancedResume ? (
+                  <>
+                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
+                    Creating Versions...
+                  </>
+                ) : (
+                  '⚡ Advanced Builder'
                 )}
               </button>
               <button
@@ -1506,7 +1574,7 @@ function Dashboard() {
 
   // Show results if available
   if (analysisResult) {
-    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} />;
+    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} originalJobDescription={jobDescription} />;
   }
 
   return (

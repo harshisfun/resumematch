@@ -123,14 +123,41 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are a professional resume writer and PDF formatting expert. Your task is to transform a candidate's resume into a professional, well-formatted resume while implementing Level 1 improvements.
+    const prompt = `You are an expert resume strategist and professional writer with deep knowledge of industry hiring practices, ATS optimization, and competitive positioning. Your task is to transform the candidate's resume into a superior, strategically-crafted document that surpasses Resume Worded quality standards.
+
+ADVANCED RESUME TRANSFORMATION STRATEGY:
+
+1. STRATEGIC POSITIONING ANALYSIS:
+   - Analyze the job description to identify the company type (startup, mid-size, enterprise, FAANG, consulting, etc.)
+   - Determine the role's seniority level and key success metrics
+   - Identify industry-specific language patterns and terminology
+   - Position the candidate optimally for this specific role and company culture
+
+2. ADVANCED CONTENT OPTIMIZATION:
+   - Use the "Accomplished [A] as measured by [B] by doing [C]" format but with sophisticated variations
+   - Prioritize achievements based on relevance to the target role
+   - Strategically reframe experiences to highlight transferable skills
+   - Use industry-specific action verbs and terminology
+   - Optimize keyword density without keyword stuffing
+
+3. ATS & HIRING MANAGER DUAL OPTIMIZATION:
+   - Structure content for maximum ATS parsing success
+   - Use strategic keyword placement in multiple resume sections
+   - Balance technical skills with leadership/soft skills based on role requirements
+   - Create scannable format for human reviewers
+
+4. COMPETITIVE DIFFERENTIATION:
+   - Identify unique value propositions from the candidate's background
+   - Emphasize achievements that set them apart from typical candidates
+   - Use market-relevant metrics and benchmarks
+   - Position experience progression strategically
 
 CRITICAL RULES:
-1. NEVER create or fabricate new facts, achievements, or experiences not present in the original resume
+1. NEVER create or fabricate new facts, achievements, or experiences
 2. Only restructure, reword, and optimize existing information
-3. Use the "Accomplished [A] as measured by [B] by doing [C]" format for all experience bullets
-4. Maintain chronological accuracy and factual integrity
-5. Create a clean, professional resume format suitable for ATS systems
+3. Maintain chronological accuracy and factual integrity
+4. Create multiple strategic angles for the same experiences
+5. Use advanced resume psychology and positioning techniques
 
 INPUT DATA:
 Original Resume:
@@ -144,7 +171,27 @@ Contact Information: ${finalContactInfo}
 Extracted Info: ${JSON.stringify(extractedInfo, null, 2)}
 
 TASK:
-Transform the resume into a clean, professional format with the following structure. Extract information from the original resume and restructure it according to Level 1 improvements.
+Transform the resume using ADVANCED STRATEGIC POSITIONING for the specific role and company. Create a superior resume that demonstrates:
+
+STRATEGIC CONTENT FRAMEWORK:
+1. **Professional Summary**: 3-4 lines that position the candidate as the ideal fit for this specific role, using industry language and highlighting unique value proposition
+2. **Core Competencies**: Strategic skill grouping that matches JD requirements exactly
+3. **Professional Experience**: Reordered and reframed to emphasize most relevant experiences first
+4. **Strategic Achievement Positioning**: Each bullet point optimized for maximum impact and relevance
+
+ADVANCED FORMATTING TECHNIQUES:
+- Use industry-appropriate section headers and terminology
+- Optimize white space and visual hierarchy for both ATS and human scanning
+- Strategic keyword placement throughout (not just skills section)
+- Professional typography and consistent formatting
+
+COMPANY-SPECIFIC OPTIMIZATION:
+Based on the job description, tailor the resume for:
+- **Startup Environment**: Emphasize agility, growth mindset, wearing multiple hats, rapid execution
+- **Enterprise/Corporate**: Focus on process improvement, compliance, stakeholder management, scale
+- **FAANG/Tech**: Highlight technical depth, innovation, data-driven decisions, system thinking
+- **Consulting**: Emphasize problem-solving, client relationship, analytical thinking, communication
+- **Finance**: Focus on accuracy, regulatory knowledge, risk management, analytical skills
 
 For each experience entry, use this format:
 - "Accomplished [A] as measured by [B] by doing [C]"
@@ -165,15 +212,16 @@ RESUME TEMPLATE TO USE (Return ONLY the filled template with NO extra text):
             padding: 0;
             box-sizing: border-box;
         }
-        body {
-            font-family: 'Georgia', 'Times New Roman', serif;
-            font-size: 11pt;
-            line-height: 1.5;
-            color: #000;
-            background: #fff;
-            margin: 1in;
-            padding: 0.25in;
-        }
+                 body {
+             font-family: 'Calibri', 'Arial', sans-serif;
+             font-size: 11pt;
+             line-height: 1.4;
+             color: #2c3e50;
+             background: #fff;
+             margin: 0.75in;
+             padding: 0.5in;
+             max-width: 8.5in;
+         }
         .header {
             text-align: center;
             margin-bottom: 30px;
