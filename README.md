@@ -2,6 +2,8 @@
 
 An AI-powered web application that analyzes candidate resumes against job descriptions using OpenAI's GPT-4. Features include Google SSO authentication, file upload support (DOCX, TXT), detailed compatibility analysis, and export functionality.
 
+Visit to view the live version - https://resumevibecheck.lol/
+
 ## Features
 
 - 🔐 Google SSO Authentication - Secure login with Google OAuth
