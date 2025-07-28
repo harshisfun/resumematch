@@ -246,33 +246,7 @@ function extractCourseRecommendations(analysis: any) {
   ];
 }
 
-function extractLevel1Improvements(analysis: any) {
-  try {
-    // Try new structure first - Scope of Improvements -> Column A
-    if (analysis["Scope of Improvements"]?.["Column A - Structural Resume Improvements"]) {
-      return analysis["Scope of Improvements"]["Column A - Structural Resume Improvements"];
-    }
-    
-    // Try Resume Transformation Examples
-    if (analysis["Scope of Improvements"]?.["Resume Transformation Examples"]) {
-      return analysis["Scope of Improvements"]["Resume Transformation Examples"];
-    }
-    
-    // Fallback to old structure
-    if (analysis["Level 1 - Immediate Resume Optimization"]) {
-      return analysis["Level 1 - Immediate Resume Optimization"];
-    }
-  } catch (error) {
-    console.error("Error extracting Level 1 improvements:", error);
-  }
-  
-  return {
-    "Keyword Integration": "Add role-relevant keywords from job description",
-    "Format Enhancement": "Restructure bullet points using 'Accomplished [A] as measured by [B] by doing [C]' format",
-    "Content Reframing": "Better highlight existing experience to match requirements",
-    "Section Optimization": "Reorganize resume sections for maximum impact"
-  };
-}
+
 
 function extractExperienceRecommendations(analysis: any) {
   const experiences = [];
@@ -640,9 +614,12 @@ interface AnalysisResult {
 /* eslint-disable */
 function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDescription }: { analysis: any; onBack: () => void; originalResumeText: string; originalJobDescription: string }) {
   const [isExporting, setIsExporting] = useState(false);
-  const [isGeneratingResume, setIsGeneratingResume] = useState(false);
-  const [isGeneratingAdvancedResume, setIsGeneratingAdvancedResume] = useState(false);
-  const [resumeVersions, setResumeVersions] = useState<any[]>([]);
+
+
+
+
+
+
   
   // Extract match score from new structure
   let matchScore = 75; // Default fallback
@@ -680,167 +657,7 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
     alert('PDF export feature coming soon!');
   };
 
-  const generatePDFFromHTML = async (htmlCode: string, candidateName: string) => {
-    try {
-      // Dynamically import jsPDF and html2canvas
-      const { default: jsPDF } = await import('jspdf');
-      const html2canvas = await import('html2canvas');
-      
-      // Create a temporary div to render the HTML
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = htmlCode;
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.left = '-9999px';
-      tempDiv.style.top = '0';
-      tempDiv.style.width = '210mm'; // A4 width
-      tempDiv.style.backgroundColor = 'white';
-      
-      document.body.appendChild(tempDiv);
-      
-      // Wait for fonts and images to load
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Convert HTML to canvas
-      const canvas = await html2canvas.default(tempDiv, {
-        scale: 2, // High quality
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff'
-      });
-      
-      // Clean up
-      document.body.removeChild(tempDiv);
-      
-      // Create PDF
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      
-      const imgData = canvas.toDataURL('image/png');
-      
-      // If content is longer than one page, handle pagination
-      if (imgHeight > 297) { // A4 height in mm
-        let position = 0;
-        let pageHeight = 297;
-        
-        while (position < imgHeight) {
-          pdf.addImage(imgData, 'PNG', 0, -position, imgWidth, imgHeight);
-          position += pageHeight;
-          
-          if (position < imgHeight) {
-            pdf.addPage();
-          }
-        }
-      } else {
-        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-      }
-      
-      // Download the PDF
-      pdf.save(`improved-resume-${candidateName}-${new Date().toISOString().split('T')[0]}.pdf`);
-      
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      throw new Error('Failed to generate PDF from HTML');
-    }
-  };
 
-  const handleBuildResume = async () => {
-    if (!originalResumeText) {
-      alert('Original resume text not available');
-      return;
-    }
-
-    setIsGeneratingResume(true);
-    try {
-      // Extract Level 1 improvements from analysis
-      const level1Improvements = extractLevel1Improvements(analysis);
-      
-      const response = await fetch('/api/generate-resume', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          resumeText: originalResumeText,
-          level1Improvements,
-          // Let the API extract these from the original resume text
-          candidateName: null,
-          contactInfo: null,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate resume');
-      }
-
-      const data = await response.json();
-      
-      if (data.htmlCode) {
-        // Generate PDF from HTML on client-side
-        await generatePDFFromHTML(data.htmlCode, data.candidateName);
-        alert('Your improved resume PDF has been downloaded! The resume has been restructured using AI with your Level 1 improvements.');
-      } else {
-        throw new Error('No HTML data received');
-      }
-    } catch (error) {
-      console.error('Error generating resume:', error);
-      alert('Failed to generate resume. Please try again.');
-    } finally {
-      setIsGeneratingResume(false);
-    }
-  };
-
-  const handleAdvancedResume = async () => {
-    if (!originalResumeText) {
-      alert('Original resume text not available');
-      return;
-    }
-
-    setIsGeneratingAdvancedResume(true);
-    try {
-      const level1Improvements = extractLevel1Improvements(analysis);
-      
-      const response = await fetch('/api/generate-resume-advanced', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          resumeText: originalResumeText,
-          jobDescription: originalJobDescription || '',
-          level1Improvements,
-          candidateName: null,
-          contactInfo: null,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate advanced resume versions');
-      }
-
-      const data = await response.json();
-      
-      if (data.resumeVersions && data.resumeVersions.length > 0) {
-        setResumeVersions(data.resumeVersions);
-        
-        // Generate PDFs for all versions
-        for (const version of data.resumeVersions) {
-          if (version.htmlCode) {
-            await generatePDFFromHTML(version.htmlCode, `${data.candidateName}-${version.name.replace(/\s+/g, '-')}`);
-          }
-        }
-        
-        alert(`✨ Advanced Resume Builder Complete!\n\n🎯 Generated ${data.resumeVersions.length} optimized versions:\n${data.resumeVersions.map(v => `• ${v.name}`).join('\n')}\n\nAll versions have been downloaded as PDFs. Each is strategically optimized for different scenarios!`);
-      } else {
-        throw new Error('No resume versions generated');
-      }
-    } catch (error) {
-      console.error('Error generating advanced resume:', error);
-      alert('Failed to generate advanced resume versions. Please try again.');
-    } finally {
-      setIsGeneratingAdvancedResume(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -861,34 +678,6 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
                 className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm"
               >
                 Export PDF
-              </button>
-              <button
-                onClick={handleBuildResume}
-                disabled={isGeneratingResume}
-                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isGeneratingResume ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                    Generating...
-                  </>
-                ) : (
-                  '🚀 Build Resume'
-                )}
-              </button>
-              <button
-                onClick={handleAdvancedResume}
-                disabled={isGeneratingAdvancedResume}
-                className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-4 py-1 rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isGeneratingAdvancedResume ? (
-                  <>
-                    <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                    Creating Versions...
-                  </>
-                ) : (
-                  '⚡ Advanced Builder'
-                )}
               </button>
               <button
                 onClick={onBack}
@@ -1465,12 +1254,16 @@ function Dashboard() {
   const [rateLimitInfo, setRateLimitInfo] = useState<{ allowed: boolean; remaining: number; resetTime?: string } | null>(null);
   const [loadingRateLimit, setLoadingRateLimit] = useState(true);
 
+
+
   // Check rate limit on component mount
   useEffect(() => {
     if (session?.user?.email) {
       checkRateLimit();
     }
   }, [session]);
+
+
 
   const checkRateLimit = async () => {
     try {
@@ -1585,6 +1378,7 @@ function Dashboard() {
           <div className="flex justify-between items-center py-4">
             <h1 className="text-xl font-bold">Job Compatibility Portal</h1>
             <div className="flex items-center space-x-4">
+
               <span className="text-sm text-gray-300">
                 Welcome, {session?.user?.email}
               </span>
@@ -1596,12 +1390,13 @@ function Dashboard() {
                   Admin
                 </a>
               )}
-              <button
-                onClick={() => signOut()}
-                className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
-              >
-                Sign out
-              </button>
+                              <button
+                  onClick={() => signOut()}
+                  className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+                >
+                  Sign out
+                </button>
+
             </div>
           </div>
         </div>
