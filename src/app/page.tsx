@@ -4,6 +4,7 @@
 import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
+import { EnhancedATSAnalysis } from '@/components/EnhancedParser/EnhancedATSAnalysis';
 
 // Helper functions to extract structured data from analysis
 function extractMatchedSkills(analysis: any) {
@@ -612,7 +613,7 @@ interface AnalysisResult {
 }
 
 /* eslint-disable */
-function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDescription }: { analysis: any; onBack: () => void; originalResumeText: string; originalJobDescription: string }) {
+function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDescription, resumeFile }: { analysis: any; onBack: () => void; originalResumeText: string; originalJobDescription: string; resumeFile?: File }) {
   const [isExporting, setIsExporting] = useState(false);
 
 
@@ -1222,6 +1223,12 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
                })()}
             </div>
 
+            {/* Enhanced ATS Analysis Section */}
+            <EnhancedATSAnalysis 
+              originalAnalysis={analysis}
+              resumeFile={resumeFile}
+            />
+
             {/* Debug Section - Can be removed later */}
             <details className="bg-gray-800 rounded-lg p-4">
               <summary className="cursor-pointer text-gray-400 text-sm mb-2">🔍 Raw Analysis Data (Debug)</summary>
@@ -1367,7 +1374,7 @@ function Dashboard() {
 
   // Show results if available
   if (analysisResult) {
-    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} originalJobDescription={jobDescription} />;
+    return <ResultsDashboard analysis={analysisResult} onBack={() => setAnalysisResult(null)} originalResumeText={resumeText} originalJobDescription={jobDescription} resumeFile={selectedFile} />;
   }
 
   return (
