@@ -46,36 +46,69 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are an expert resume analyzer and career consultant. Your task is to conduct a comprehensive section-wise analysis of a candidate's resume against a specific job description and provide detailed feedback with individual scoring for each resume element.
+    const prompt = `You are an expert resume strategist and ATS optimization specialist. Your task is to conduct a comprehensive section-wise analysis of a candidate's resume against a specific job description and provide detailed, point-by-point optimizations for EVERY element of their resume.
 
-SECTION-WISE ANALYSIS REQUIREMENTS:
+CRITICAL ANALYSIS REQUIREMENTS:
 
-1. PROFESSIONAL EXPERIENCE ANALYSIS:
-   - Extract EVERY bullet point from each job/role in the resume
-   - Score each bullet point individually (0-10) based on:
-     * Impact and quantification (30%)
-     * Relevance to target JD (25%)
-     * Action verb strength (20%)
-     * Clarity and specificity (15%)
-     * Keyword alignment (10%)
-   - Provide improved version of each bullet point using "Accomplished [A] as measured by [B] by doing [C]" format
-   - Explain what improvements were made (action verbs, quantification, keywords, etc.)
+1. PROFESSIONAL SUMMARY/OBJECTIVE OPTIMIZATION:
+   - Extract the EXACT current summary/objective (if present)
+   - Create an optimized version that:
+     * Incorporates 3-5 keywords from the JD naturally
+     * Highlights the candidate's most relevant experience for THIS specific role
+     * Uses powerful action-oriented language
+     * Demonstrates clear value proposition
+   - If no summary exists, create a compelling 2-3 line professional summary
+   - Score: Current vs Optimized version (0-10)
 
-2. SKILLS SECTION ANALYSIS:
-   - Evaluate current skills presentation and organization
-   - Reorganize skills into relevant categories with JD keywords
-   - Identify missing skills from JD requirements
-   - Score the overall skills section presentation
+2. PROFESSIONAL EXPERIENCE DEEP OPTIMIZATION:
+   For EACH job/role in the resume:
+   - Extract EVERY bullet point exactly as written
+   - For EACH bullet point, provide:
+     * Current version (exact copy)
+     * Optimized version with:
+       - Job-relevant keywords from the JD woven naturally
+       - Stronger action verbs specific to the target role
+       - Enhanced quantification (preserve existing numbers, add context)
+       - Impact-focused language using "Accomplished [A] as measured by [B] by doing [C]" format
+       - Industry-specific terminology from the JD
+     * Keyword additions: List specific JD keywords integrated
+     * Action verb enhancement: Show before/after action verbs
+     * Score improvement: Rate original (0-10) vs optimized (target 8-10)
+     * Relevance explanation: How this bullet now better matches JD requirements
 
-3. EDUCATION SECTION ANALYSIS:
-   - Assess educational background relevance to role
-   - Suggest improvements in presentation
-   - Score based on relevance and presentation
+3. SKILLS SECTION STRATEGIC REORGANIZATION:
+   - Extract EXACT current skills list
+   - Create optimized skills organization:
+     * Technical Skills: Prioritize JD-mentioned technologies first
+     * Core Competencies: Match JD soft skills and methodologies  
+     * Tools & Platforms: Align with JD requirements
+     * Certifications: Highlight relevant credentials
+   - Add missing critical skills from JD (if candidate likely has them)
+   - Provide skills placement strategy for maximum ATS impact
+   - Score: Current presentation vs optimized (0-10)
 
-4. OTHER SECTIONS (Projects, Summary, etc.):
-   - Analyze each section if present
-   - Provide specific improvement suggestions
-   - Individual scoring for each section
+4. EDUCATION SECTION ENHANCEMENT:
+   - Extract current education details exactly
+   - Optimize presentation:
+     * Highlight relevant coursework/projects matching JD
+     * Emphasize GPA/honors if beneficial for this role
+     * Add relevant academic achievements
+     * Position education appropriately (top/bottom based on role level)
+   - Score relevance and presentation (0-10)
+
+5. PROJECTS SECTION OPTIMIZATION (if present):
+   - Extract EVERY project exactly as listed
+   - For EACH project, provide optimized version:
+     * Enhanced project descriptions using JD-relevant keywords
+     * Technology alignment with JD requirements
+     * Impact-focused language with quantifiable outcomes
+     * Business value demonstration
+   - Score: Current vs optimized presentation (0-10)
+
+6. ADDITIONAL SECTIONS ENHANCEMENT:
+   - Analyze any other sections (Certifications, Awards, Volunteer, etc.)
+   - Provide optimized versions that support the target role
+   - Strategic placement recommendations
 
 Analysis Instructions:
 Carefully compare the candidate's resume against the job description, considering:
@@ -128,44 +161,73 @@ Provide the analysis in the following JSON structure:
 {
   "Overall Candidacy Score": [0-100 numeric value],
   "Section Wise Analysis": {
+    "Professional Summary": {
+      "Current Version": "Exact current summary/objective (or 'Not Present' if missing)",
+      "Optimized Version": "Enhanced summary with JD-relevant keywords and value proposition",
+      "Keywords Added": ["List of JD keywords integrated"],
+      "Improvements Made": ["Specific enhancements like 'Added quantifiable impact', 'Incorporated target role keywords', etc."],
+      "Current Score": [0-10],
+      "Optimized Score": [8-10],
+      "ATS Impact": "How the optimization improves ATS scanning"
+    },
     "Professional Experience": {
       "Overall Section Score": [0-10],
-      "Bullet Points Analysis": [
+      "Jobs": [
         {
-          "Original Text": "Exact bullet point from resume",
-          "Score": [0-10],
-          "Score Reasoning": "Why this score was given",
-          "Improved Version": "Rewritten bullet point using 'Accomplished [A] as measured by [B] by doing [C]' format",
-          "Improvements Applied": ["Action Verb Enhancement", "Quantification Added", "Keywords Integrated", "Impact Clarified"],
-          "JD Alignment": "How this relates to job requirements"
+          "Job Title": "Exact job title from resume",
+          "Company": "Company name",
+          "Bullet Points": [
+            {
+              "Original Text": "Exact bullet point from resume",
+              "Optimized Version": "Enhanced version with JD keywords and stronger action verbs",
+              "Keywords Added": ["Specific JD keywords integrated"],
+              "Action Verb Enhancement": "Original verb → Enhanced verb",
+              "Quantification Improvement": "How numbers/metrics were enhanced",
+              "Current Score": [0-10],
+              "Optimized Score": [8-10],
+              "Relevance Explanation": "How this bullet now better matches JD requirements",
+              "ATS Keyword Density": "Keywords per sentence ratio"
+            }
+          ]
         }
       ]
     },
-    "Education": {
-      "Overall Section Score": [0-10],
-      "Analysis": "Assessment of educational background vs JD requirements",
-      "Improvements": "Suggestions for better presentation of education"
-    },
     "Skills": {
-      "Overall Section Score": [0-10],
-      "Current Skills Presentation": "How skills are currently listed",
-      "Improved Skills Organization": {
-        "Technical Skills": ["List of reorganized technical skills with JD keywords"],
-        "Soft Skills": ["List of relevant soft skills"],
-        "Tools & Technologies": ["List of tools/platforms"]
+      "Current Skills List": "Exact skills as listed in resume",
+      "Optimized Skills Organization": {
+        "Technical Skills": ["JD-prioritized technical skills"],
+        "Core Competencies": ["JD-aligned soft skills and methodologies"],
+        "Tools & Platforms": ["JD-relevant tools and technologies"],
+        "Industry Knowledge": ["Domain-specific skills from JD"]
       },
-      "Missing Skills": ["Skills mentioned in JD but not in resume"]
+      "Missing Critical Skills": ["Important JD skills not currently listed"],
+      "Skills Placement Strategy": "Where to position skills for maximum ATS impact",
+      "Current Score": [0-10],
+      "Optimized Score": [8-10],
+      "Keyword Match Percentage": "[X]% of JD skills present"
+    },
+    "Education": {
+      "Current Education": "Exact education section from resume",
+      "Optimized Presentation": "Enhanced education section highlighting JD-relevant aspects",
+      "Relevant Coursework": ["JD-aligned courses to highlight"],
+      "Academic Achievements": ["Honors/projects relevant to target role"],
+      "Positioning Strategy": "Whether to place education at top or bottom",
+      "Current Score": [0-10],
+      "Optimized Score": [7-10]
     },
     "Projects": {
-      "Overall Section Score": [0-10],
-      "Analysis": "Assessment of projects section if present",
-      "Suggestions": "How to better present projects"
-    },
-    "Summary/Objective": {
-      "Score": [0-10],
-      "Current Version": "Current summary/objective from resume",
-      "Improved Version": "Rewritten summary targeting the specific role",
-      "Improvements": "What was enhanced"
+      "Current Projects": ["Exact project descriptions from resume"],
+      "Optimized Projects": [
+        {
+          "Original Description": "Current project description",
+          "Enhanced Description": "Optimized with JD keywords and impact focus",
+          "Technology Alignment": "How technologies match JD requirements",
+          "Business Value": "Quantifiable impact and outcomes",
+          "Keywords Added": ["JD-relevant technical keywords"]
+        }
+      ],
+      "Current Score": [0-10],
+      "Optimized Score": [8-10]
     }
   },
   "Score Breakdown": {
@@ -303,20 +365,62 @@ Provide the analysis in the following JSON structure:
    }
 }
 
+CRITICAL OPTIMIZATION RULES:
+
+1. FACTUAL ACCURACY REQUIREMENTS:
+   - NEVER fabricate experiences, achievements, or qualifications
+   - ONLY enhance presentation of existing information from the resume
+   - Preserve all dates, numbers, and quantifiable metrics exactly as provided
+   - Do not add new companies, roles, or responsibilities not mentioned in resume
+   - Keep chronological accuracy and employment timeline intact
+
+2. KEYWORD INTEGRATION STRATEGY:
+   - Extract 10-15 most important keywords/phrases from the Job Description
+   - Integrate keywords naturally into existing resume content without forced placement
+   - Use variations and synonyms of JD keywords for natural language flow
+   - Maintain readability while optimizing for ATS scanning
+   - Priority keywords: role requirements, technical skills, industry terms, methodologies
+
+3. ACTION VERB ENHANCEMENT GUIDELINES:
+   - Replace weak verbs (managed, worked on, responsible for, helped with) with powerful alternatives
+   - Use role-specific action verbs that appear in the Job Description
+   - Examples: "managed" → "orchestrated/directed", "worked on" → "spearheaded/executed", "helped" → "facilitated/enabled"
+   - Ensure verb tense consistency (past tense for previous roles, present for current)
+
+4. QUANTIFICATION ENHANCEMENT RULES:
+   - Preserve ALL existing numbers and add contextual impact where logical
+   - Example: "increased sales by 20%" → "increased sales by 20% (representing $500K revenue impact)"
+   - Add team sizes, budget amounts, timeframes, and scope indicators where they enhance impact
+   - Only add quantification that is realistic and logically consistent with the role level
+
+5. ATS OPTIMIZATION PRINCIPLES:
+   - Use standard section headers that ATS systems recognize
+   - Include both abbreviations and full forms (e.g., "API (Application Programming Interface)")
+   - Incorporate both hard skills and soft skills mentioned in the JD
+   - Use industry-standard terminology and job-relevant buzzwords
+   - Ensure appropriate keyword density (10-15% of content) without keyword stuffing
+
+6. CONTENT OPTIMIZATION FOCUS:
+   - For each bullet point, ask: "Does this demonstrate value relevant to the target role?"
+   - Reframe generic responsibilities into specific achievements with measurable impact
+   - Align technology mentions with JD requirements (prioritize matching tech stack)
+   - Highlight transferable skills when experience isn't directly relevant
+   - Ensure each optimized bullet point serves the narrative of being perfect for THIS specific role
+
 Resume:
 ${resumeText}
 
 Job Description:
 ${jobDescription}
 
-CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all recommendations are specific, actionable, and tailored to the exact role and candidate profile.`;
+CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all optimizations preserve factual accuracy while maximizing JD alignment and ATS compatibility.`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a professional technical recruiter and career strategist with 15+ years of experience evaluating candidates for tech roles across Fortune 500 companies. Provide detailed, objective analysis in JSON format."
+          content: "You are an expert resume strategist and ATS optimization specialist with deep expertise in transforming resumes for maximum impact. Your specialties include: (1) Natural keyword integration that beats ATS systems, (2) Action-verb optimization for role-specific impact, (3) Quantification enhancement while preserving factual accuracy, (4) Content reframing for perfect job-role alignment. You excel at making candidates appear as the ideal fit for specific positions while maintaining complete honesty about their background. Provide detailed optimization analysis in the exact JSON format requested."
         },
         {
           role: "user",
