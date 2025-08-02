@@ -905,6 +905,14 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
           </div>
         )}
 
+        {/* Enhanced ATS Analysis Section - Always show when we have analysis data */}
+        {analysis && Object.keys(analysis).length > 0 && (
+          <EnhancedATSAnalysis 
+            originalAnalysis={analysis}
+            resumeFile={resumeFile}
+          />
+        )}
+
         {/* Original Structured Analysis Sections (fallback) */}
         {analysis && Object.keys(analysis).length > 0 && !analysis["Section Wise Analysis"] && (
           <div className="space-y-8">
@@ -1222,12 +1230,6 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
                  );
                })()}
             </div>
-
-            {/* Enhanced ATS Analysis Section */}
-            <EnhancedATSAnalysis 
-              originalAnalysis={analysis}
-              resumeFile={resumeFile}
-            />
 
             {/* Debug Section - Can be removed later */}
             <details className="bg-gray-800 rounded-lg p-4">
