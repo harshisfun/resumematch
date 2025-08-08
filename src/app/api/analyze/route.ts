@@ -197,8 +197,7 @@ Evidence rules:
     return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
 
     // Legacy prompt removed
-    /*
-    const prompt = ``;
+    /* const prompt = ``; */
 
 ANALYSIS REQUIREMENTS:
 
@@ -317,7 +316,7 @@ Provide the analysis in the following JSON structure:
       "Analysis": "Detailed assessment of education relevance",
       "Improvements": "Specific recommendations for education section"
     }
-    */
+    // end legacy block
   },
   "Score Breakdown": {
     "Years of Relevant Experience": {
