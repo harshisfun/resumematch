@@ -9,9 +9,18 @@ interface EnhancedATSAnalysisProps {
 }
 
 export const EnhancedATSAnalysis = ({ originalAnalysis, resumeFile }: EnhancedATSAnalysisProps) => {
+  // Force button to show for testing - temporarily clear any existing state
   const [enhancedResult, setEnhancedResult] = useState<EnhancedParserResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Debug logging
+  console.log('EnhancedATSAnalysis render:', { 
+    hasEnhancedResult: !!enhancedResult, 
+    isLoading, 
+    hasResumeFile: !!resumeFile,
+    hasOriginalAnalysis: !!originalAnalysis 
+  });
 
   const runEnhancedAnalysis = async () => {
     if (!resumeFile) {
@@ -108,7 +117,11 @@ export const EnhancedATSAnalysis = ({ originalAnalysis, resumeFile }: EnhancedAT
     }
   };
 
-  if (!enhancedResult) {
+  // Force show button for debugging
+  const shouldShowButton = true; // enhancedResult === null;
+  
+  if (shouldShowButton) {
+    console.log('Showing Enhanced Analysis Button - enhancedResult is null');
     return (
       <div className="bg-gradient-to-r from-purple-900/20 to-pink-900/20 border border-purple-700 rounded-lg p-6">
         <h3 className="text-2xl font-semibold mb-6 text-purple-400 flex items-center">
@@ -120,6 +133,9 @@ export const EnhancedATSAnalysis = ({ originalAnalysis, resumeFile }: EnhancedAT
         </h3>
         
         <div className="text-center">
+          <div className="bg-yellow-900/20 border border-yellow-700 rounded-lg p-3 mb-4">
+            <p className="text-yellow-300 text-sm font-medium">🔧 DEBUG MODE: Button forced to show</p>
+          </div>
           <p className="text-gray-300 mb-4">
                          Get advanced resume parsing and ATS optimization insights powered by OpenResume&apos;s algorithm.
           </p>
@@ -158,6 +174,7 @@ export const EnhancedATSAnalysis = ({ originalAnalysis, resumeFile }: EnhancedAT
     );
   }
 
+  console.log('Showing Enhanced Analysis Results - enhancedResult exists');
   return (
     <div className="space-y-6">
       {/* Enhanced ATS Score Comparison */}

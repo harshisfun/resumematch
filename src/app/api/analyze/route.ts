@@ -46,115 +46,63 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are an expert resume strategist and ATS optimization specialist. Your task is to conduct a comprehensive section-wise analysis of a candidate's resume against a specific job description and provide detailed, point-by-point optimizations for EVERY element of their resume.
+    // Enhanced prompt with better structure and actionable insights
+    const prompt = `You are an expert resume strategist and ATS optimization specialist with deep expertise in transforming resumes for maximum impact. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide detailed, actionable insights.
 
-CRITICAL ANALYSIS REQUIREMENTS:
+ANALYSIS REQUIREMENTS:
 
-1. PROFESSIONAL SUMMARY/OBJECTIVE OPTIMIZATION:
-   - Extract the EXACT current summary/objective (if present)
-   - Create an optimized version that:
-     * Incorporates 3-5 keywords from the JD naturally
-     * Highlights the candidate's most relevant experience for THIS specific role
-     * Uses powerful action-oriented language
-     * Demonstrates clear value proposition
-   - If no summary exists, create a compelling 2-3 line professional summary
-   - Score: Current vs Optimized version (0-10)
+1. OVERALL CANDIDACY SCORE (0-100):
+   - Calculate a comprehensive score based on all factors
+   - Consider skills match, experience relevance, education, and overall fit
+   - Provide clear reasoning for the score
 
-2. PROFESSIONAL EXPERIENCE DEEP OPTIMIZATION:
-   For EACH job/role in the resume:
-   - Extract EVERY bullet point exactly as written
-   - For EACH bullet point, provide:
-     * Current version (exact copy)
-     * Optimized version with:
-       - Job-relevant keywords from the JD woven naturally
-       - Stronger action verbs specific to the target role
-       - Enhanced quantification (preserve existing numbers, add context)
-       - Impact-focused language using "Accomplished [A] as measured by [B] by doing [C]" format
-       - Industry-specific terminology from the JD
-     * Keyword additions: List specific JD keywords integrated
-     * Action verb enhancement: Show before/after action verbs
-     * Score improvement: Rate original (0-10) vs optimized (target 8-10)
-     * Relevance explanation: How this bullet now better matches JD requirements
+2. SECTION-WISE ANALYSIS:
+   For each resume section (Professional Summary, Experience, Skills, Education, Projects):
+   - Extract current content exactly as written
+   - Provide optimized versions with JD-specific keywords
+   - Score each section (0-10) with detailed reasoning
+   - Include specific improvements and keyword integrations
 
-3. SKILLS SECTION STRATEGIC REORGANIZATION:
-   - Extract EXACT current skills list
-   - Create optimized skills organization:
-     * Technical Skills: Prioritize JD-mentioned technologies first
-     * Core Competencies: Match JD soft skills and methodologies  
-     * Tools & Platforms: Align with JD requirements
-     * Certifications: Highlight relevant credentials
-   - Add missing critical skills from JD (if candidate likely has them)
-   - Provide skills placement strategy for maximum ATS impact
-   - Score: Current presentation vs optimized (0-10)
+3. SCORE BREAKDOWN:
+   - Years of Relevant Experience (0-25 points)
+   - Technical & Core Skills Match (0-20 points)
+   - Previous Work Quality & Impact (0-15 points)
+   - Education Institution Tier (0-15 points)
+   - Relevant Projects & Internships (0-10 points)
+   - Certifications & Additional Qualifications (0-8 points)
+   - Extracurricular Activities & Leadership (0-4 points)
+   - Communication & Presentation Skills (0-3 points)
 
-4. EDUCATION SECTION ENHANCEMENT:
-   - Extract current education details exactly
-   - Optimize presentation:
-     * Highlight relevant coursework/projects matching JD
-     * Emphasize GPA/honors if beneficial for this role
-     * Add relevant academic achievements
-     * Position education appropriately (top/bottom based on role level)
-   - Score relevance and presentation (0-10)
+4. STRENGTHS & WEAKNESSES:
+   - Identify 3-5 key strengths that align with the JD
+   - Identify 3-5 areas for improvement
+   - Provide specific evidence and impact assessment
 
-5. PROJECTS SECTION OPTIMIZATION (if present):
-   - Extract EVERY project exactly as listed
-   - For EACH project, provide optimized version:
-     * Enhanced project descriptions using JD-relevant keywords
-     * Technology alignment with JD requirements
-     * Impact-focused language with quantifiable outcomes
-     * Business value demonstration
-   - Score: Current vs optimized presentation (0-10)
+5. IMPROVEMENT ROADMAP:
+   - Immediate resume optimizations (keywords, format, content)
+   - Long-term development recommendations (courses, certifications, experience)
+   - Specific actionable steps with timelines
 
-6. ADDITIONAL SECTIONS ENHANCEMENT:
-   - Analyze any other sections (Certifications, Awards, Volunteer, etc.)
-   - Provide optimized versions that support the target role
-   - Strategic placement recommendations
-
-Analysis Instructions:
-Carefully compare the candidate's resume against the job description, considering:
-* Required skills, qualifications, and experience
-* Preferred qualifications and nice-to-have skills
-* Company culture and industry standards
-* Role responsibilities and expectations
-* Career progression requirements
+6. MARKET COMPETITIVENESS:
+   - Assess candidate's position in the talent pool
+   - Provide realistic success probability
+   - Compare against typical successful candidates
+   - Include detailed market reasoning
 
 CRITICAL REQUIREMENTS:
 
-FOR RESUME TRANSFORMATION EXAMPLES:
-1. Extract 3-5 actual bullet points from the candidate's resume (copy them exactly)
-2. Rewrite each bullet point to better align with the JD using:
-   - Job-relevant keywords from the JD
-   - "Accomplished [A] as measured by [B] by doing [C]" format
-   - Stronger action verbs
-   - Quantification where possible (estimate if needed)
-   - Industry-specific terminology
-3. For the skills section, take the actual skills listed and reorganize/enhance them
-4. If there's a summary/objective, rewrite it to better match the JD
-5. Always preserve factual accuracy - enhance presentation, don't fabricate new experiences
+- FACTUAL ACCURACY: Never fabricate experiences or qualifications
+- KEYWORD INTEGRATION: Naturally incorporate JD keywords into existing content
+- ACTION VERBS: Enhance weak verbs with powerful alternatives
+- QUANTIFICATION: Preserve existing numbers and add context where logical
+- ATS OPTIMIZATION: Use standard headers and industry terminology
+- SPECIFIC RECOMMENDATIONS: Provide exact course names, URLs, and actionable steps
 
-FOR COURSE/CERTIFICATION RECOMMENDATIONS:
-1. Recommend EXACTLY 3 courses/certifications that are most relevant to the JD requirements
-2. Prioritize well-known, reputable providers (Coursera, Udemy, AWS, Google, Microsoft, etc.)
-3. Include actual, working URLs to the specific courses (not just platform homepages)
-4. Focus on the most popular and industry-recognized certifications/courses
-5. Consider the candidate's current skill level and suggest appropriate next steps
-6. Examples of good recommendations:
-   - AWS Certified Solutions Architect (for cloud roles)
-   - Google Data Analytics Certificate (for data roles)
-   - Coursera Machine Learning Specialization by Stanford (for ML roles)
-   - Scrum Master Certification (for product/project management roles)
+Resume:
+${resumeText}
 
-FOR MARKET COMPETITIVENESS DETAILED REASONING:
-1. Analyze the company type/tier based on JD (startup, mid-size, enterprise, FAANG, etc.)
-2. Provide specific hiring patterns for that company type and role level
-3. Reference actual educational tiers relevant to Indian market (IIT/IIM/ISI = Tier 1, NIT/IIIT = Tier 2, etc.)
-4. Give concrete percentages and statistics for typical hiring criteria
-5. Compare candidate's background point-by-point against typical successful hires
-6. Explain WHY each factor helps or hurts their chances with specific reasoning
-7. Examples of good reasoning:
-   - "FAANG companies for Senior PM roles typically hire 70% from Tier 1 institutions, 25% from Tier 2, 5% from Tier 3"
-   - "For this Data Scientist role, Google typically requires 5+ years ML experience, PhD/Masters preferred, Python/TensorFlow expertise"
-   - "Mid-size startups in fintech prioritize domain experience (60%) over educational pedigree (20%)"
+Job Description:
+${jobDescription}
 
 Provide the analysis in the following JSON structure:
 
@@ -165,7 +113,7 @@ Provide the analysis in the following JSON structure:
       "Current Version": "Exact current summary/objective (or 'Not Present' if missing)",
       "Optimized Version": "Enhanced summary with JD-relevant keywords and value proposition",
       "Keywords Added": ["List of JD keywords integrated"],
-      "Improvements Made": ["Specific enhancements like 'Added quantifiable impact', 'Incorporated target role keywords', etc."],
+      "Improvements Made": ["Specific enhancements"],
       "Current Score": [0-10],
       "Optimized Score": [8-10],
       "ATS Impact": "How the optimization improves ATS scanning"
@@ -176,6 +124,7 @@ Provide the analysis in the following JSON structure:
         {
           "Job Title": "Exact job title from resume",
           "Company": "Company name",
+          "date": "Date range",
           "Bullet Points": [
             {
               "Original Text": "Exact bullet point from resume",
@@ -213,21 +162,9 @@ Provide the analysis in the following JSON structure:
       "Academic Achievements": ["Honors/projects relevant to target role"],
       "Positioning Strategy": "Whether to place education at top or bottom",
       "Current Score": [0-10],
-      "Optimized Score": [7-10]
-    },
-    "Projects": {
-      "Current Projects": ["Exact project descriptions from resume"],
-      "Optimized Projects": [
-        {
-          "Original Description": "Current project description",
-          "Enhanced Description": "Optimized with JD keywords and impact focus",
-          "Technology Alignment": "How technologies match JD requirements",
-          "Business Value": "Quantifiable impact and outcomes",
-          "Keywords Added": ["JD-relevant technical keywords"]
-        }
-      ],
-      "Current Score": [0-10],
-      "Optimized Score": [8-10]
+      "Optimized Score": [7-10],
+      "Analysis": "Detailed assessment of education relevance",
+      "Improvements": "Specific recommendations for education section"
     }
   },
   "Score Breakdown": {
@@ -288,130 +225,62 @@ Provide the analysis in the following JSON structure:
       "Severity": "Critical/Moderate/Minor"
     }
   ],
-     "Scope of Improvements": {
-     "Column A - Structural Resume Improvements": {
-       "Keyword Integration": [
-         "Specific industry and role-relevant keywords to add from JD"
-       ],
-       "Format Enhancement": [
-         "Specific bullet points to restructure using 'Accomplished [A] as measured by [B] by doing [C]' format"
-       ],
-       "Content Reframing": [
-         "Ways to better highlight existing experience to match JD requirements"
-       ],
-       "Section Optimization": [
-         "Recommendations for resume section reorganization or emphasis"
-       ],
-       "Quantification": [
-         "Areas where metrics and numbers should be added to existing achievements"
-       ]
-     },
-     "Resume Transformation Examples": {
-       "Bullet Point Improvements": [
-         {
-           "Original": "Exact original bullet point from candidate's resume",
-           "Improved": "Enhanced version using suggestions and JD alignment",
-           "Improvements Applied": ["Keyword integration", "Quantification", "Action verb strengthening"],
-           "Impact": "Explanation of how this change improves JD alignment and ATS compatibility"
-         }
-       ],
-       "Skills Section Enhancement": {
-         "Original Skills List": "Current skills section from resume",
-         "Improved Skills List": "Reorganized and enhanced skills section with JD-relevant keywords",
-         "Changes Made": "Specific improvements made to skills presentation"
-       },
-       "Summary/Objective Rewrite": {
-         "Original": "Current summary/objective if present",
-         "Improved": "Enhanced version aligned with JD requirements",
-         "Key Changes": "Specific improvements made"
-       }
-     },
-         "Column B - Long-term Career Development": {
-       "Top 3 Recommended Courses/Certifications": [
-         {
-           "Course/Certification Name": "Specific course or certification name",
-           "Provider": "Platform or institution name (e.g., Coursera, Udemy, AWS, Google)",
-           "Duration": "Time to complete (e.g., 3-6 months, 40 hours)",
-           "Cost": "Approximate cost (e.g., $49/month, $2000, Free)",
-           "Relevance": "Why this specific course/cert is valuable for the JD",
-           "Direct Link": "https://actual-course-url.com",
-           "Priority": "High/Medium based on JD alignment"
-         }
-       ],
-       "Skills Development": [
-         "Technical and soft skills to acquire for better role fit"
-       ],
-       "Experience Building": [
-         "Types of projects, roles, or responsibilities to seek"
-       ],
-       "Professional Development": [
-         "Networking, leadership opportunities, or industry involvement"
-       ]
-     }
+  "Scope of Improvements": {
+    "Column A - Structural Resume Improvements": {
+      "Keyword Integration": [
+        "Specific industry and role-relevant keywords to add from JD"
+      ],
+      "Format Enhancement": [
+        "Specific bullet points to restructure using 'Accomplished [A] as measured by [B] by doing [C]' format"
+      ],
+      "Content Reframing": [
+        "Ways to better highlight existing experience to match JD requirements"
+      ],
+      "Section Optimization": [
+        "Recommendations for resume section reorganization or emphasis"
+      ],
+      "Quantification": [
+        "Areas where metrics and numbers should be added to existing achievements"
+      ]
+    },
+    "Column B - Long-term Career Development": {
+      "Top 3 Recommended Courses/Certifications": [
+        {
+          "Course/Certification Name": "Specific course or certification name",
+          "Provider": "Platform or institution name (e.g., Coursera, Udemy, AWS, Google)",
+          "Duration": "Time to complete (e.g., 3-6 months, 40 hours)",
+          "Cost": "Approximate cost (e.g., $49/month, $2000, Free)",
+          "Relevance": "Why this specific course/cert is valuable for the JD",
+          "Direct Link": "https://actual-course-url.com",
+          "Priority": "High/Medium based on JD alignment"
+        }
+      ],
+      "Skills Development": [
+        "Technical and soft skills to acquire for better role fit"
+      ],
+      "Experience Building": [
+        "Types of projects, roles, or responsibilities to seek"
+      ],
+      "Professional Development": [
+        "Networking, leadership opportunities, or industry involvement"
+      ]
+    }
   },
-     "Market Competitiveness": {
-     "Competitive Level": "Below Average/Average/Above Average/Exceptional",
-     "Market Position": "Explanation of where candidate stands in talent pool",
-     "Hiring Probability": "Realistic assessment of chances based on current profile", 
-     "Benchmark Comparison": "How candidate compares to successful hires for similar positions",
-     "Percentile Ranking": "Top X% of candidates for this role",
-     "Detailed Reasoning": {
-       "Company Hiring Patterns": "Company X typically hires candidates with [specific skills/experience/education]. For this role, they prefer [specific requirements with examples]",
-       "Educational Background Analysis": "This company/role typically recruits from [Tier 1/2/3] institutions. Candidate's [institution name] falls in [tier] which [helps/hurts] their chances because [specific reasoning]",
-       "Experience Level Expectations": "For this role at Company X, typical hires have [X-Y years] of experience in [specific areas]. Candidate has [actual experience] which positions them [above/below/at] the typical range",
-       "Skills Gap Analysis": "Company X prioritizes [specific skill set] for this role. Based on typical hiring patterns, candidates need proficiency in [specific technologies/skills]. Candidate's profile shows [specific gaps/strengths]",
-       "Success Probability Breakdown": "Based on Company X's hiring history for similar roles: [X]% of hired candidates had [qualification 1], [Y]% had [qualification 2], [Z]% had [qualification 3]. Candidate meets [number] of these criteria"
-     }
-   }
+  "Market Competitiveness": {
+    "Competitive Level": "Below Average/Average/Above Average/Exceptional",
+    "Market Position": "Explanation of where candidate stands in talent pool",
+    "Hiring Probability": "Realistic assessment of chances based on current profile", 
+    "Benchmark Comparison": "How candidate compares to successful hires for similar positions",
+    "Percentile Ranking": "Top X% of candidates for this role",
+    "Detailed Reasoning": {
+      "Company Hiring Patterns": "Company X typically hires candidates with [specific skills/experience/education]. For this role, they prefer [specific requirements with examples]",
+      "Educational Background Analysis": "This company/role typically recruits from [Tier 1/2/3] institutions. Candidate's [institution name] falls in [tier] which [helps/hurts] their chances because [specific reasoning]",
+      "Experience Level Expectations": "For this role at Company X, typical hires have [X-Y years] of experience in [specific areas]. Candidate has [actual experience] which positions them [above/below/at] the typical range",
+      "Skills Gap Analysis": "Company X prioritizes [specific skill set] for this role. Based on typical hiring patterns, candidates need proficiency in [specific technologies/skills]. Candidate's profile shows [specific gaps/strengths]",
+      "Success Probability Breakdown": "Based on Company X's hiring history for similar roles: [X]% of hired candidates had [qualification 1], [Y]% had [qualification 2], [Z]% had [qualification 3]. Candidate meets [number] of these criteria"
+    }
+  }
 }
-
-CRITICAL OPTIMIZATION RULES:
-
-1. FACTUAL ACCURACY REQUIREMENTS:
-   - NEVER fabricate experiences, achievements, or qualifications
-   - ONLY enhance presentation of existing information from the resume
-   - Preserve all dates, numbers, and quantifiable metrics exactly as provided
-   - Do not add new companies, roles, or responsibilities not mentioned in resume
-   - Keep chronological accuracy and employment timeline intact
-
-2. KEYWORD INTEGRATION STRATEGY:
-   - Extract 10-15 most important keywords/phrases from the Job Description
-   - Integrate keywords naturally into existing resume content without forced placement
-   - Use variations and synonyms of JD keywords for natural language flow
-   - Maintain readability while optimizing for ATS scanning
-   - Priority keywords: role requirements, technical skills, industry terms, methodologies
-
-3. ACTION VERB ENHANCEMENT GUIDELINES:
-   - Replace weak verbs (managed, worked on, responsible for, helped with) with powerful alternatives
-   - Use role-specific action verbs that appear in the Job Description
-   - Examples: "managed" → "orchestrated/directed", "worked on" → "spearheaded/executed", "helped" → "facilitated/enabled"
-   - Ensure verb tense consistency (past tense for previous roles, present for current)
-
-4. QUANTIFICATION ENHANCEMENT RULES:
-   - Preserve ALL existing numbers and add contextual impact where logical
-   - Example: "increased sales by 20%" → "increased sales by 20% (representing $500K revenue impact)"
-   - Add team sizes, budget amounts, timeframes, and scope indicators where they enhance impact
-   - Only add quantification that is realistic and logically consistent with the role level
-
-5. ATS OPTIMIZATION PRINCIPLES:
-   - Use standard section headers that ATS systems recognize
-   - Include both abbreviations and full forms (e.g., "API (Application Programming Interface)")
-   - Incorporate both hard skills and soft skills mentioned in the JD
-   - Use industry-standard terminology and job-relevant buzzwords
-   - Ensure appropriate keyword density (10-15% of content) without keyword stuffing
-
-6. CONTENT OPTIMIZATION FOCUS:
-   - For each bullet point, ask: "Does this demonstrate value relevant to the target role?"
-   - Reframe generic responsibilities into specific achievements with measurable impact
-   - Align technology mentions with JD requirements (prioritize matching tech stack)
-   - Highlight transferable skills when experience isn't directly relevant
-   - Ensure each optimized bullet point serves the narrative of being perfect for THIS specific role
-
-Resume:
-${resumeText}
-
-Job Description:
-${jobDescription}
 
 CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all optimizations preserve factual accuracy while maximizing JD alignment and ATS compatibility.`;
 
@@ -445,55 +314,65 @@ CRITICAL: Return ONLY valid JSON following the exact structure above. Do not inc
       // Clean the response text - remove any markdown code blocks or extra text
       let cleanedText = analysisText.trim();
       
-      // Remove markdown code block syntax if present
+      // Remove markdown code blocks if present
       if (cleanedText.startsWith('```json')) {
-        cleanedText = cleanedText.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (cleanedText.startsWith('```')) {
-        cleanedText = cleanedText.replace(/^```\s*/, '').replace(/\s*```$/, '');
+        cleanedText = cleanedText.substring(7);
+      }
+      if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.substring(3);
+      }
+      if (cleanedText.endsWith('```')) {
+        cleanedText = cleanedText.substring(0, cleanedText.length - 3);
       }
       
-      // Find the first { and last } to extract just the JSON part
-      const firstBrace = cleanedText.indexOf('{');
-      const lastBrace = cleanedText.lastIndexOf('}');
+      cleanedText = cleanedText.trim();
       
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        cleanedText = cleanedText.substring(firstBrace, lastBrace + 1);
+      // Ensure it starts and ends with braces
+      if (!cleanedText.startsWith('{')) {
+        const braceStart = cleanedText.indexOf('{');
+        if (braceStart !== -1) {
+          cleanedText = cleanedText.substring(braceStart);
+        }
+      }
+      if (!cleanedText.endsWith('}')) {
+        const braceEnd = cleanedText.lastIndexOf('}');
+        if (braceEnd !== -1) {
+          cleanedText = cleanedText.substring(0, braceEnd + 1);
+        }
       }
       
       analysis = JSON.parse(cleanedText);
     } catch (parseError) {
-      // If JSON parsing fails, return the raw text for debugging
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
+      console.error('JSON parsing error:', parseError);
       console.error('Raw response:', analysisText);
+      
       return NextResponse.json({ 
-        error: 'Failed to parse analysis response',
-        rawResponse: analysisText,
-        parseError: parseError instanceof Error ? parseError.message : String(parseError)
+        error: 'Failed to parse analysis response. Please try again.',
+        details: 'The AI response was not in the expected JSON format.'
       }, { status: 500 });
     }
 
-    // Record usage after successful analysis
+    // Validate the analysis structure
+    if (!analysis || typeof analysis !== 'object') {
+      return NextResponse.json({ 
+        error: 'Invalid analysis structure received' 
+      }, { status: 500 });
+    }
+
+    // Record usage
     recordAnalysisUsage(session.user.email);
 
-    return NextResponse.json({
+    return NextResponse.json({ 
       analysis,
-      timestamp: new Date().toISOString(),
-      rateLimit: {
-        remaining: rateLimitResult.remaining
-      }
+      message: 'Analysis completed successfully'
     });
 
   } catch (error) {
     console.error('Analysis error:', error);
     
-    if (error instanceof Error) {
-      return NextResponse.json({ 
-        error: error.message 
-      }, { status: 500 });
-    }
-    
     return NextResponse.json({ 
-      error: 'Internal server error' 
+      error: 'An error occurred during analysis',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 } 

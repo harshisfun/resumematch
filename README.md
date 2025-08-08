@@ -20,6 +20,38 @@ Get up and running in 3 minutes:
 - 🤖 AI-Powered Analysis - Detailed compatibility analysis using OpenAI GPT-4
 - 📊 Comprehensive Reports - Skill matching, missing criteria, and improvement recommendations
 - 📤 Export Functionality - Export results as JSON or PDF
+
+### ✍️ Resume Bullet Rewriter
+
+What it does
+- Rewrites each resume bullet using only the original facts and the job description’s vocabulary. Shows Original → Improved → Why, keyword coverage before/after, and risk flags for hallucination checks. Apply per bullet or “Apply all safe”.
+
+How to run locally
+- Set `OPENAI_API_KEY` in your environment.
+- Start the app (see Quick Start). Navigate to the main analysis flow. After results load, open the “✍️ Rewriter” tab.
+
+API contract
+Request: `POST /api/suggest-bullets`
+```
+{ "resumeBullets": string[], "jobDescription": string }
+```
+Response:
+```
+{ "suggestions": {
+  index: number,
+  original: string,
+  improved: string,
+  explanation: string,
+  jdKeywordsUsed: string[],
+  coverageBefore: number,
+  coverageAfter: number,
+  riskFlags: string[]
+}[] }
+```
+
+Notes
+- Uses `gpt-4o-mini` with structured outputs and a fact lock to avoid new claims. If any phrase is not supported by original facts, the item is flagged and disabled for Apply.
+- Shared OpenAI client: `src/lib/openai.ts`.
 - ⚡  Rate Limiting - 3 analyses per 24-hour period per user
 - 👑 Admin Dashboard - Manage rate limits and whitelist users
 - 🎨 Modern UI - Beautiful, responsive design with Tailwind CSS
