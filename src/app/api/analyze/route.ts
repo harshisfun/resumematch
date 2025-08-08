@@ -165,6 +165,8 @@ Evidence rules:
       schema: ANALYSIS_SCHEMA
     };
 
+    // Cast to any to allow response_format until SDK typings catch up
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const responsesParams: any = {
       model: getModel(),
       input: [
