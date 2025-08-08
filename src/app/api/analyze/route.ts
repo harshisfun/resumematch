@@ -197,9 +197,8 @@ Evidence rules:
     return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
 
     // Legacy prompt removed
-    /* const prompt = ``; */
-
-ANALYSIS REQUIREMENTS:
+    /*
+    ANALYSIS REQUIREMENTS:
 
 1. OVERALL CANDIDACY SCORE (0-100):
    - Calculate a comprehensive score based on all factors
@@ -221,7 +220,7 @@ ANALYSIS REQUIREMENTS:
    - Relevant Projects & Internships (0-10 points)
    - Certifications & Additional Qualifications (0-8 points)
    - Extracurricular Activities & Leadership (0-4 points)
-   - Communication & Presentation Skills (0-3 points)
+    - Communication & Presentation Skills (0-3 points)
 
 4. STRENGTHS & WEAKNESSES:
    - Identify 3-5 key strengths that align with the JD
@@ -237,16 +236,16 @@ ANALYSIS REQUIREMENTS:
    - Assess candidate's position in the talent pool
    - Provide realistic success probability
    - Compare against typical successful candidates
-   - Include detailed market reasoning
+    - Include detailed market reasoning
 
-CRITICAL REQUIREMENTS:
+    CRITICAL REQUIREMENTS:
 
 - FACTUAL ACCURACY: Never fabricate experiences or qualifications
 - KEYWORD INTEGRATION: Naturally incorporate JD keywords into existing content
 - ACTION VERBS: Enhance weak verbs with powerful alternatives
 - QUANTIFICATION: Preserve existing numbers and add context where logical
 - ATS OPTIMIZATION: Use standard headers and industry terminology
-- SPECIFIC RECOMMENDATIONS: Provide exact course names, URLs, and actionable steps
+    - SPECIFIC RECOMMENDATIONS: Provide exact course names, URLs, and actionable steps
 
 Resume:
 ${resumeText}
@@ -316,6 +315,7 @@ Provide the analysis in the following JSON structure:
       "Analysis": "Detailed assessment of education relevance",
       "Improvements": "Specific recommendations for education section"
     }
+    */
     // end legacy block
   },
   "Score Breakdown": {
