@@ -8,6 +8,7 @@ interface AchievementSystemProps {
 
 export const AchievementSystem = ({ analysis }: AchievementSystemProps) => {
   // narrow for safe access
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = (analysis as Record<string, any>) || {};
   const [achievements, setAchievements] = useState([
     { id: 'first_analysis', name: 'First Analysis', description: 'Complete your first resume analysis', earned: true, icon: '🎯' },
