@@ -10,7 +10,7 @@ type FactLock = { facts: string[] };
 type RewriteResult = { improved: string; explanation: string; jdKeywordsUsed: string[] };
 type ValidatorResult = { unsupported: string[] };
 
-const openai = getOpenAIClient;
+// use centralized client directly
 
 function bulletize(text: string): string[] {
   const lines = text
