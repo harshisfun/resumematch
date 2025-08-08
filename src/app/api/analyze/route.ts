@@ -165,18 +165,19 @@ Evidence rules:
       schema: ANALYSIS_SCHEMA
     };
 
-    const rsp = await openai.responses.create({
+    const responsesParams: any = {
       model: getModel(),
       input: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(userContent) }
       ],
-      response_format: { type: 'json_schema', json_schema: { name: 'ResumeJDAnalysis', schema: ANALYSIS_SCHEMA, strict: true } as any },
+      response_format: { type: 'json_schema', json_schema: { name: 'ResumeJDAnalysis', schema: ANALYSIS_SCHEMA, strict: true } },
       temperature: 0.2,
       top_p: 1,
       seed: 7,
       max_output_tokens: 2000
-    });
+    };
+    const rsp = await openai.responses.create(responsesParams);
 
     let analysis: unknown;
     try {
