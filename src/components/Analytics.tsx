@@ -2,21 +2,22 @@
 import { useState } from 'react';
 
 interface AnalyticsDashboardProps {
-  analysis: any;
-  history: any[];
+  analysis: unknown;
+  history: unknown[];
 }
 
-export const AnalyticsDashboard = ({ analysis, history }: AnalyticsDashboardProps) => {
+export const AnalyticsDashboard = ({ analysis }: AnalyticsDashboardProps) => {
   const [timeRange, setTimeRange] = useState('30d');
   const [metric, setMetric] = useState('overall');
 
   const getAnalyticsData = () => {
     // Mock data - in real implementation, this would come from database
+    const a = (analysis as Record<string, any>) || {};
     return {
-      overall: { current: analysis?.["Overall Candidacy Score"] || 0, trend: 5.2 },
-      skills: { current: analysis?.["Score Breakdown"]?.["Technical & Core Skills Match"]?.Score || 0, trend: 3.1 },
-      experience: { current: analysis?.["Score Breakdown"]?.["Previous Work Quality & Impact"]?.Score || 0, trend: 2.8 },
-      education: { current: analysis?.["Score Breakdown"]?.["Education Institution Tier"]?.Score || 0, trend: 1.5 }
+      overall: { current: a?.["Overall Candidacy Score"] || 0, trend: 5.2 },
+      skills: { current: a?.["Score Breakdown"]?.["Technical & Core Skills Match"]?.Score || 0, trend: 3.1 },
+      experience: { current: a?.["Score Breakdown"]?.["Previous Work Quality & Impact"]?.Score || 0, trend: 2.8 },
+      education: { current: a?.["Score Breakdown"]?.["Education Institution Tier"]?.Score || 0, trend: 1.5 }
     };
   };
 

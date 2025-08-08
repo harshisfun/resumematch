@@ -180,7 +180,8 @@ Evidence rules:
 
     let analysis: unknown;
     try {
-      // @ts-expect-error helper on SDK
+      // Prefer SDK helper, fallback to stringify
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const text = (rsp as any).output_text ?? JSON.stringify(rsp);
       analysis = JSON.parse(text);
     } catch (err) {

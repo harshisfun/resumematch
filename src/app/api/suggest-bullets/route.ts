@@ -150,6 +150,7 @@ export async function POST(req: NextRequest) {
           } as any
         }
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return JSON.parse(res.choices[0]?.message?.content || "{}");
     };
 
@@ -163,6 +164,7 @@ export async function POST(req: NextRequest) {
         temperature: 0.2,
         response_format: { type: "json_object" }
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return JSON.parse(res.choices[0]?.message?.content || "{}");
     };
 

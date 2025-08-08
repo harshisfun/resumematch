@@ -77,7 +77,7 @@ export const SuggestionsPanel: React.FC<Props> = ({ suggestions, onApply }) => {
                     <select
                       className="bg-gray-800 text-gray-100 text-xs rounded px-2 py-1 border border-gray-700"
                       value={variantChoice[s.index] || "balanced"}
-                      onChange={(e) => setVariantChoice(prev => ({ ...prev, [s.index]: e.target.value as any }))}
+                      onChange={(e) => setVariantChoice(prev => ({ ...prev, [s.index]: e.target.value as "conservative" | "balanced" | "keywordHeavy" }))}
                     >
                       <option value="conservative">Conservative</option>
                       <option value="balanced">Balanced</option>

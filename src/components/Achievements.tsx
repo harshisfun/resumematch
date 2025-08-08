@@ -2,16 +2,19 @@
 import { useState } from 'react';
 
 interface AchievementSystemProps {
-  analysis: any;
+  // keep unknown to avoid any rule
+  analysis: unknown;
 }
 
 export const AchievementSystem = ({ analysis }: AchievementSystemProps) => {
+  // narrow for safe access
+  const a = (analysis as Record<string, any>) || {};
   const [achievements, setAchievements] = useState([
     { id: 'first_analysis', name: 'First Analysis', description: 'Complete your first resume analysis', earned: true, icon: '🎯' },
-    { id: 'high_score', name: 'High Achiever', description: 'Score 80% or higher on any analysis', earned: analysis?.["Overall Candidacy Score"] >= 80, icon: '🏆' },
-    { id: 'skill_master', name: 'Skill Master', description: 'Achieve 90%+ in skills match', earned: analysis?.["Score Breakdown"]?.["Technical & Core Skills Match"]?.Score >= 18, icon: '⚡' },
+    { id: 'high_score', name: 'High Achiever', description: 'Score 80% or higher on any analysis', earned: (a?.["Overall Candidacy Score"] ?? 0) >= 80, icon: '🏆' },
+    { id: 'skill_master', name: 'Skill Master', description: 'Achieve 90%+ in skills match', earned: a?.["Score Breakdown"]?.["Technical & Core Skills Match"]?.Score >= 18, icon: '⚡' },
     { id: 'optimizer', name: 'Resume Optimizer', description: 'Complete 5 analyses', earned: false, icon: '🔧' },
-    { id: 'market_expert', name: 'Market Expert', description: 'Achieve above-average market position', earned: analysis?.["Market Competitiveness"]?.["Competitive Level"] === 'Above Average' || analysis?.["Market Competitiveness"]?.["Competitive Level"] === 'Exceptional', icon: '📈' }
+    { id: 'market_expert', name: 'Market Expert', description: 'Achieve above-average market position', earned: a?.["Market Competitiveness"]?.["Competitive Level"] === 'Above Average' || a?.["Market Competitiveness"]?.["Competitive Level"] === 'Exceptional', icon: '📈' }
   ]);
 
   const earnedCount = achievements.filter(a => a.earned).length;

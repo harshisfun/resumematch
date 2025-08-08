@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401 });
     }
 
-    const { amount, currency, paymentMethod } = await request.json();
+    const { amount, currency } = await request.json();
 
     // Validate payment amount
     if (amount !== 2900) { // $29.00 in cents

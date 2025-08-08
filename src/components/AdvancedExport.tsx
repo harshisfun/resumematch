@@ -2,7 +2,7 @@
 import { useState } from 'react';
 
 interface AdvancedExportProps {
-  analysis: any;
+  analysis: unknown;
 }
 
 export const AdvancedExport = ({ analysis }: AdvancedExportProps) => {
