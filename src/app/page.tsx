@@ -4,7 +4,6 @@
 import { SessionProvider, useSession, signIn, signOut } from "next-auth/react";
 import { useCallback, useState, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import { EnhancedATSAnalysis } from '@/components/EnhancedParser/EnhancedATSAnalysis';
 import { SuggestionsPanel } from '@/components/SuggestionsPanel';
 import type { BulletSuggestion } from '@/types/BulletSuggestion';
 import { AnalyticsDashboard } from '@/components/Analytics';
@@ -857,7 +856,6 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
     { id: 'resume', label: '📝 Resume Analysis', icon: '📝' },
     { id: 'improvements', label: '🚀 Improvements', icon: '🚀' },
     { id: 'market', label: '📈 Market Position', icon: '📈' },
-    { id: 'enhanced', label: '🔍 Enhanced ATS', icon: '🔍' },
     { id: 'analytics', label: '📊 Analytics', icon: '📊' },
     { id: 'achievements', label: '🏅 Achievements', icon: '🏅' },
     { id: 'rewriter', label: '✍️ Rewriter', icon: '✍️' },
@@ -1381,20 +1379,7 @@ function ResultsDashboard({ analysis, onBack, originalResumeText, originalJobDes
           </div>
         )}
 
-        {/* Enhanced ATS Tab */}
-        {activeTab === 'enhanced' && (
-          <div className="space-y-8">
-            <h2 className="text-2xl font-bold mb-6">🔍 Enhanced ATS Analysis</h2>
-            
-            {/* Enhanced ATS Analysis Section */}
-            {analysis && Object.keys(analysis).length > 0 && (
-              <EnhancedATSAnalysis 
-                originalAnalysis={analysis}
-                resumeFile={resumeFile}
-              />
-            )}
-          </div>
-        )}
+        {/* Enhanced ATS Tab removed */}
 
         {/* Rewriter Tab */}
         {activeTab === 'rewriter' && (
