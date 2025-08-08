@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
               },
               required: ["slots","variants","constraints","evidence","explanation"]
             }
-          } as any
+          } as unknown as Record<string, unknown>
         }
       });
       return JSON.parse(res.choices[0]?.message?.content || "{}");
