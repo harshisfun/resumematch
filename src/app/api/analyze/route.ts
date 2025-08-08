@@ -196,7 +196,6 @@ Evidence rules:
 
     return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
 
-    // Legacy prompt removed
     /*
     ANALYSIS REQUIREMENTS:
 
