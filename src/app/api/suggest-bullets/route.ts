@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
           { role: "user", content: JSON.stringify({ facts, signals }) }
         ],
         temperature: 0.2,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest) {
               },
               required: ["slots","variants","constraints","evidence","explanation"]
             }
-          } as unknown as Record<string, unknown>
+          } as any
         }
       });
       return JSON.parse(res.choices[0]?.message?.content || "{}");
