@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { openai, getModel } from '@/lib/ai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// centralized client + model via lib/ai
 
 function extractCandidateInfo(resumeText: string) {
   const info = {
@@ -493,7 +491,7 @@ CONTENT COMPLETENESS CHECK:
 Return ONLY the complete HTML code, ready for PDF conversion. Do not include any explanations or comments outside the HTML document.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: getModel(),
       messages: [
         {
           role: "system",

@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { openai, getModel } from '@/lib/ai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { canUseAnalysis, recordAnalysisUsage } from '@/lib/rateLimit';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// centralized client + model via lib/ai
 
 export async function POST(request: NextRequest) {
   try {
@@ -285,7 +283,7 @@ Provide the analysis in the following JSON structure:
 CRITICAL: Return ONLY valid JSON following the exact structure above. Do not include any text before or after the JSON. The response must start with { and end with }. Ensure all optimizations preserve factual accuracy while maximizing JD alignment and ATS compatibility.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: getModel(),
       messages: [
         {
           role: "system",

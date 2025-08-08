@@ -50,8 +50,8 @@ Response:
 ```
 
 Notes
-- Uses `gpt-4o-mini` with structured outputs and a fact lock to avoid new claims. If any phrase is not supported by original facts, the item is flagged and disabled for Apply.
-- Shared OpenAI client: `src/lib/openai.ts`.
+- Uses `OPENAI_MODEL` if set (e.g., `gpt-5`); otherwise falls back to a safe default.
+- Shared OpenAI client and model resolver: `src/lib/ai.ts`.
 - ⚡  Rate Limiting - 3 analyses per 24-hour period per user
 - 👑 Admin Dashboard - Manage rate limits and whitelist users
 - 🎨 Modern UI - Beautiful, responsive design with Tailwind CSS
@@ -80,6 +80,8 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 # OpenAI API
 OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5
+OPENAI_MODEL=gpt-5
 
 # Mistral AI (for PDF OCR processing)
 MISTRAL_API_KEY=your-mistral-api-key
@@ -150,6 +152,10 @@ NEXTAUTH_SECRET=your-production-secret
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5
+
+### Model selection
+Set `OPENAI_MODEL` (e.g., `gpt-5`). If unavailable on your API key, the app falls back to `gpt-4o-mini`.
 ```
 
 ### Google OAuth Setup

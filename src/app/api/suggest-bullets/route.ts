@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { keywordCoverage } from "@/lib/coverage";
 import { JdSignals, JD_SIGNALS_SCHEMA } from "@/lib/jdSignals";
 import { BulletSuggestion } from "@/types/BulletSuggestion";
-import { getOpenAIClient } from "@/lib/openai";
+import { openai, getModel } from "@/lib/ai";
 
 type FactLock = { facts: string[] };
 type RewriteResult = { improved: string; explanation: string; jdKeywordsUsed: string[] };
@@ -46,11 +46,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "resumeBullets and jobDescription are required" }, { status: 400 });
     }
 
-    const client = openai();
+    const client = openai;
 
     // 1) JD Signals extraction via Structured Output
     const jdExtraction = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: getModel(),
       messages: [
         { role: "system", content: "Extract skills & synonyms strictly from this JD. No creativity. Return JSON by schema." },
         { role: "user", content: jobDescription }
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     // Helper function calls
     const runFactLock = async (bullet: string): Promise<FactLock> => {
       const res = await client.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: getModel(),
         messages: [
           { role: "system", content: "Extract atomic facts from the bullet. Keep metrics/dates verbatim. Return JSON: { facts: string[] } only." },
           { role: "user", content: bullet }
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     const runRewrite = async (facts: string[], signals: JdSignals): Promise<RewriteResult> => {
       const res = await client.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: getModel(),
         messages: [
           { role: "system", content: "Rewrite using ONLY these facts. Keep numbers/dates verbatim. Prefer JD vocabulary and action verbs. No new claims, no fluff. Return JSON by schema." },
           { role: "user", content: JSON.stringify({ facts, signals }) }
