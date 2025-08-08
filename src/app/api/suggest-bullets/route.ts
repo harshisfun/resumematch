@@ -71,6 +71,8 @@ export async function POST(req: NextRequest) {
         { role: "user", content: jobDescription }
       ],
       temperature: 0,
+      // cast is fine in runtime; SDK types may lag
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       response_format: { type: "json_schema", json_schema: { name: "jd_signals", schema: JD_SIGNALS_SCHEMA } as any }
     });
 
@@ -150,7 +152,6 @@ export async function POST(req: NextRequest) {
           } as any
         }
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return JSON.parse(res.choices[0]?.message?.content || "{}");
     };
 
@@ -164,7 +165,6 @@ export async function POST(req: NextRequest) {
         temperature: 0.2,
         response_format: { type: "json_object" }
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return JSON.parse(res.choices[0]?.message?.content || "{}");
     };
 

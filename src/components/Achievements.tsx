@@ -10,7 +10,7 @@ export const AchievementSystem = ({ analysis }: AchievementSystemProps) => {
   // narrow for safe access
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const a = (analysis as Record<string, any>) || {};
-  const [achievements, setAchievements] = useState([
+  const [achievements] = useState([
     { id: 'first_analysis', name: 'First Analysis', description: 'Complete your first resume analysis', earned: true, icon: '🎯' },
     { id: 'high_score', name: 'High Achiever', description: 'Score 80% or higher on any analysis', earned: (a?.["Overall Candidacy Score"] ?? 0) >= 80, icon: '🏆' },
     { id: 'skill_master', name: 'Skill Master', description: 'Achieve 90%+ in skills match', earned: a?.["Score Breakdown"]?.["Technical & Core Skills Match"]?.Score >= 18, icon: '⚡' },

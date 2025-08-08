@@ -12,6 +12,7 @@ export const AnalyticsDashboard = ({ analysis }: AnalyticsDashboardProps) => {
 
   const getAnalyticsData = () => {
     // Mock data - in real implementation, this would come from database
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const a = (analysis as Record<string, any>) || {};
     return {
       overall: { current: a?.["Overall Candidacy Score"] || 0, trend: 5.2 },
