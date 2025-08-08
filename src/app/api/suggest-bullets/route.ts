@@ -7,8 +7,23 @@ import { BulletSuggestion } from "@/types/BulletSuggestion";
 import { openai, getModel } from "@/lib/ai";
 
 type FactLock = { facts: string[] };
-type RewriteResult = { improved: string; explanation: string; jdKeywordsUsed: string[] };
-type ValidatorResult = { unsupported: string[] };
+type RewriteResult = {
+  slots: {
+    actionVerb: string;
+    scope: string;
+    problem: string;
+    method: string;
+    tools: string[];
+    metrics: { value: string; what: string };
+    outcome: string;
+    jdKeywordsMapped: string[];
+  };
+  variants: { conservative: string; balanced: string; keywordHeavy: string };
+  constraints: { tense: "past" | "present"; maxWords: number; oneMetric: boolean };
+  evidence: Array<{ source: "resume" | "jd"; start: number; end: number; quote: string }>;
+  explanation: string;
+};
+type ValidatorResult = { unsupported: string[]; omissions?: string[]; confidence?: number };
 
 // use centralized client directly
 
@@ -81,10 +96,10 @@ export async function POST(req: NextRequest) {
       const res = await client.chat.completions.create({
         model: getModel(),
         messages: [
-          { role: "system", content: "Rewrite using ONLY these facts. Keep numbers/dates verbatim. Prefer JD vocabulary and action verbs. No new claims, no fluff. Return JSON by schema." },
+          { role: "system", content: "Rewrite using ONLY these facts. Keep numbers/dates verbatim. Prefer JD vocabulary and action verbs. No new claims, no fluff. Output the `slots` object first (strictly from facts), then `variants` rendered via templates (conservative/balanced/keywordHeavy). Enforce constraints: 18-26 words, exactly one metric, tense by role, one sentence, no semicolons/emojis/first-person. Normalize action verb from: [\"Drove\",\"Built\",\"Shipped\",\"Automated\",\"Scaled\",\"Optimized\",\"Designed\",\"Led\",\"Launched\",\"Reduced\",\"Increased\",\"Improved\"]. Return JSON by schema only." },
           { role: "user", content: JSON.stringify({ facts, signals }) }
         ],
-        temperature: 0,
+        temperature: 0.2,
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -92,11 +107,45 @@ export async function POST(req: NextRequest) {
             schema: {
               type: "object",
               properties: {
-                improved: { type: "string" },
-                explanation: { type: "string" },
-                jdKeywordsUsed: { type: "array", items: { type: "string" } }
+                slots: {
+                  type: "object",
+                  properties: {
+                    actionVerb: { type: "string" },
+                    scope: { type: "string" },
+                    problem: { type: "string" },
+                    method: { type: "string" },
+                    tools: { type: "array", items: { type: "string" } },
+                    metrics: { type: "object", properties: { value: { type: "string" }, what: { type: "string" } }, required: ["value","what"] },
+                    outcome: { type: "string" },
+                    jdKeywordsMapped: { type: "array", items: { type: "string" } }
+                  },
+                  required: ["actionVerb","problem","method","metrics","outcome","jdKeywordsMapped"],
+                },
+                variants: {
+                  type: "object",
+                  properties: {
+                    conservative: { type: "string" },
+                    balanced: { type: "string" },
+                    keywordHeavy: { type: "string" }
+                  },
+                  required: ["conservative","balanced","keywordHeavy"]
+                },
+                constraints: {
+                  type: "object",
+                  properties: {
+                    tense: { type: "string", enum: ["past","present"] },
+                    maxWords: { type: "integer" },
+                    oneMetric: { type: "boolean" }
+                  },
+                  required: ["tense","maxWords","oneMetric"]
+                },
+                evidence: {
+                  type: "array",
+                  items: { type: "object", properties: { source: { type: "string", enum: ["resume","jd"] }, start: { type: "integer" }, end: { type: "integer" }, quote: { type: "string" } }, required: ["source","start","end","quote"] }
+                },
+                explanation: { type: "string" }
               },
-              required: ["improved", "explanation", "jdKeywordsUsed"]
+              required: ["slots","variants","constraints","evidence","explanation"]
             }
           } as any
         }
@@ -108,10 +157,10 @@ export async function POST(req: NextRequest) {
       const res = await client.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
-          { role: "system", content: "Compare original facts and improved bullet. List phrases in the improved text that are NOT supported by the original facts. Return JSON: { unsupported: string[] } only." },
+          { role: "system", content: "Compare original facts and improved bullet. List unsupported phrases, note omissions like missing metric/scope, and compute confidence: start 1.0, -0.3 if any unsupported, -0.1 per omission, +0.1 if all numbers match; clamp 0..1. Return JSON: { unsupported: string[], omissions: string[], confidence: number } only." },
           { role: "user", content: JSON.stringify({ facts, improved }) }
         ],
-        temperature: 0,
+        temperature: 0.2,
         response_format: { type: "json_object" }
       });
       return JSON.parse(res.choices[0]?.message?.content || "{}");
@@ -122,23 +171,39 @@ export async function POST(req: NextRequest) {
       const factLock = await runFactLock(original);
       const facts = Array.isArray(factLock.facts) ? factLock.facts : [];
       const rewrite = await runRewrite(facts, jdSignals);
-      const validator = await runValidator(facts, rewrite.improved || "");
+      const selected = rewrite.variants?.balanced || rewrite.variants?.conservative || original;
+      const validator = await runValidator(facts, selected);
 
       const coverageBefore = keywordCoverage(original, jdSignals);
-      const coverageAfter = keywordCoverage(rewrite.improved || original, jdSignals);
+      const coverageAfter = keywordCoverage(selected || original, jdSignals);
 
       const riskFlags = Array.isArray(validator.unsupported) ? validator.unsupported : [];
 
-      suggestions.push({
+      const suggestion: BulletSuggestion = {
         index: i,
         original,
-        improved: rewrite.improved || original,
+        slots: rewrite.slots || {
+          actionVerb: "",
+          scope: "",
+          problem: "",
+          method: "",
+          tools: [],
+          metrics: { value: "", what: "" },
+          outcome: "",
+          jdKeywordsMapped: []
+        },
+        variants: rewrite.variants || { conservative: selected, balanced: selected, keywordHeavy: selected },
+        improved: selected,
+        constraints: rewrite.constraints || { tense: "past", maxWords: 26, oneMetric: true },
+        evidence: rewrite.evidence || [],
         explanation: rewrite.explanation || "",
-        jdKeywordsUsed: Array.isArray(rewrite.jdKeywordsUsed) ? rewrite.jdKeywordsUsed : [],
         coverageBefore,
         coverageAfter,
-        riskFlags
-      });
+        riskFlags,
+        confidence: typeof validator.confidence === "number" ? Math.max(0, Math.min(1, validator.confidence)) : (riskFlags.length ? 0.5 : 0.8)
+      };
+
+      suggestions.push(suggestion);
     }
 
     return NextResponse.json({ suggestions });
