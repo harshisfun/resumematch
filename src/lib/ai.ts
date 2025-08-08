@@ -15,7 +15,11 @@ export function getModel(): string {
 
 export async function assertModelAvailable(model: string = getModel()): Promise<boolean> {
   try {
-    await openai.responses.create({ model, input: "ping", max_output_tokens: 5 });
+    await openai.chat.completions.create({ 
+      model, 
+      messages: [{ role: 'user', content: 'ping' }], 
+      max_tokens: 5 
+    });
     return true;
   } catch (err) {
     // eslint-disable-next-line no-console

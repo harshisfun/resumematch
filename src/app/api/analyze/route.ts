@@ -165,28 +165,56 @@ Evidence rules:
       schema: ANALYSIS_SCHEMA
     };
 
-    // Cast to any to allow response_format until SDK typings catch up
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const responsesParams: any = {
+    // Use standard chat completions API instead of responses API
+    const completion = await openai.chat.completions.create({
       model: getModel(),
-      input: [
+      messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: JSON.stringify(userContent) }
       ],
-      response_format: { type: 'json_schema', json_schema: { name: 'ResumeJDAnalysis', schema: ANALYSIS_SCHEMA, strict: true } },
+      response_format: { type: 'json_object' },
       temperature: 0.2,
-      top_p: 1,
-      seed: 7,
-      max_output_tokens: 2000
-    };
-    const rsp = await openai.responses.create(responsesParams);
+      max_tokens: 2000
+    });
 
     let analysis: unknown;
     try {
-      // Prefer SDK helper, fallback to stringify
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const text = (rsp as any).output_text ?? JSON.stringify(rsp);
-      analysis = JSON.parse(text);
+      const analysisText = completion.choices[0]?.message?.content;
+      if (!analysisText) {
+        return NextResponse.json({ error: 'No analysis generated' }, { status: 500 });
+      }
+      
+      // Clean the response text - remove any markdown code blocks or extra text
+      let cleanedText = analysisText.trim();
+      
+      // Remove markdown code blocks if present
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.substring(7);
+      }
+      if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.substring(3);
+      }
+      if (cleanedText.endsWith('```')) {
+        cleanedText = cleanedText.substring(0, cleanedText.length - 3);
+      }
+      
+      cleanedText = cleanedText.trim();
+      
+      // Ensure it starts and ends with braces
+      if (!cleanedText.startsWith('{')) {
+        const braceStart = cleanedText.indexOf('{');
+        if (braceStart !== -1) {
+          cleanedText = cleanedText.substring(braceStart);
+        }
+      }
+      if (!cleanedText.endsWith('}')) {
+        const braceEnd = cleanedText.lastIndexOf('}');
+        if (braceEnd !== -1) {
+          cleanedText = cleanedText.substring(0, braceEnd + 1);
+        }
+      }
+      
+      analysis = JSON.parse(cleanedText);
     } catch (err) {
       console.error('Invalid JSON from model', err);
       return NextResponse.json({ error: 'Invalid JSON from model' }, { status: 500 });
