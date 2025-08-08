@@ -2,13 +2,56 @@
 
 An AI-powered web application that analyzes candidate resumes against job descriptions using OpenAI's GPT-4. Features include Google SSO authentication, file upload support (DOCX, TXT), detailed compatibility analysis, and export functionality.
 
+## 🚀 Quick Start
+
+Get up and running in 3 minutes:
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Configure environment variables (see below)
+4. Run: `npm run dev`
+
+🎯 **Perfect for recruiters, HR teams, and candidates looking to optimize their job applications!**
+
 ## Features
 
 - 🔐 Google SSO Authentication - Secure login with Google OAuth
-- 📄 File Upload Support - Upload DOCX and TXT resume files
+- 📄 File Upload Support - Upload PDF, DOCX and TXT resume files (AI-powered OCR)
 - 🤖 AI-Powered Analysis - Detailed compatibility analysis using OpenAI GPT-4
 - 📊 Comprehensive Reports - Skill matching, missing criteria, and improvement recommendations
 - 📤 Export Functionality - Export results as JSON or PDF
+
+### ✍️ Resume Bullet Rewriter
+
+What it does
+- Rewrites each resume bullet using only the original facts and the job description’s vocabulary. Shows Original → Improved → Why, keyword coverage before/after, and risk flags for hallucination checks. Apply per bullet or “Apply all safe”.
+
+How to run locally
+- Set `OPENAI_API_KEY` in your environment.
+- Start the app (see Quick Start). Navigate to the main analysis flow. After results load, open the “✍️ Rewriter” tab.
+
+API contract
+Request: `POST /api/suggest-bullets`
+```
+{ "resumeBullets": string[], "jobDescription": string }
+```
+Response:
+```
+{ "suggestions": {
+  index: number,
+  original: string,
+  improved: string,
+  explanation: string,
+  jdKeywordsUsed: string[],
+  coverageBefore: number,
+  coverageAfter: number,
+  riskFlags: string[]
+}[] }
+```
+
+Notes
+- Uses `OPENAI_MODEL` if set (e.g., `gpt-5`); otherwise falls back to a safe default.
+- Shared OpenAI client and model resolver: `src/lib/ai.ts`.
 - ⚡  Rate Limiting - 3 analyses per 24-hour period per user
 - 👑 Admin Dashboard - Manage rate limits and whitelist users
 - 🎨 Modern UI - Beautiful, responsive design with Tailwind CSS
@@ -37,7 +80,14 @@ GOOGLE_CLIENT_SECRET=your-google-client-secret
 
 # OpenAI API
 OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5
+OPENAI_MODEL=gpt-5
+
+# Mistral AI (for PDF OCR processing)
+MISTRAL_API_KEY=your-mistral-api-key
 ```
+
+**Note**: The `MISTRAL_API_KEY` is required for PDF processing. Without it, only DOCX and TXT files will be supported.
 
 ## Getting Started
 
@@ -102,6 +152,10 @@ NEXTAUTH_SECRET=your-production-secret
 GOOGLE_CLIENT_ID=your-google-client-id
 GOOGLE_CLIENT_SECRET=your-google-client-secret
 OPENAI_API_KEY=your-openai-api-key
+OPENAI_MODEL=gpt-5
+
+### Model selection
+Set `OPENAI_MODEL` (e.g., `gpt-5`). If unavailable on your API key, the app falls back to `gpt-4o-mini`.
 ```
 
 ### Google OAuth Setup
@@ -132,7 +186,7 @@ OPENAI_API_KEY=your-openai-api-key
 
 - **DOCX**: Full support with text extraction
 - **TXT**: Full support
-- **PDF**: Coming soon (currently disabled)
+- **PDF**: ✅ Supported via Mistral OCR (AI-powered)
 
 ## API Endpoints
 

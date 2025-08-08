@@ -1,0 +1,17 @@
+
+> job-fit-ai-portal-nextjs@0.1.0 dev
+> next dev --turbopack
+
+ ⚠ Warning: Found multiple lockfiles. Selecting /Users/harshbhatt/package-lock.json.
+   Consider removing the lockfiles at:
+   * /Users/harshbhatt/Desktop/Projects/job-fit-ai-portal-nextjs/package-lock.json
+
+ ⚠ Port 3000 is in use by process 93786, using available port 3005 instead.
+   ▲ Next.js 15.4.1 (Turbopack)
+   - Local:        http://localhost:3005
+   - Network:      http://192.168.0.150:3005
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Compiled middleware in 118ms
+ ✓ Ready in 914ms

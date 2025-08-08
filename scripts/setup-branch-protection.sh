@@ -88,9 +88,14 @@ setup_branch_protection() {
     if [ "$branch_name" = "main" ]; then
         gh api repos/$REPO_OWNER/$REPO_NAME/branches/$branch_name/protection \
             --method PUT \
-            --field required_status_checks='{"strict":true,"contexts":["test (18.x)","test (20.x)","security"]}' \
+            --field required_status_checks[strict]=true \
+            --field required_status_checks[contexts][]="test (18.x)" \
+            --field required_status_checks[contexts][]="test (20.x)" \
+            --field required_status_checks[contexts][]="security" \
             --field enforce_admins=$require_admin \
-            --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":true,"require_code_owner_reviews":true}' \
+            --field required_pull_request_reviews[required_approving_review_count]=1 \
+            --field required_pull_request_reviews[dismiss_stale_reviews]=true \
+            --field required_pull_request_reviews[require_code_owner_reviews]=true \
             --field restrictions=null \
             --field allow_force_pushes=false \
             --field allow_deletions=false
@@ -98,9 +103,14 @@ setup_branch_protection() {
         # Develop branch gets slightly relaxed rules
         gh api repos/$REPO_OWNER/$REPO_NAME/branches/$branch_name/protection \
             --method PUT \
-            --field required_status_checks='{"strict":true,"contexts":["test (18.x)","test (20.x)","security"]}' \
+            --field required_status_checks[strict]=true \
+            --field required_status_checks[contexts][]="test (18.x)" \
+            --field required_status_checks[contexts][]="test (20.x)" \
+            --field required_status_checks[contexts][]="security" \
             --field enforce_admins=false \
-            --field required_pull_request_reviews='{"required_approving_review_count":1,"dismiss_stale_reviews":false,"require_code_owner_reviews":false}' \
+            --field required_pull_request_reviews[required_approving_review_count]=1 \
+            --field required_pull_request_reviews[dismiss_stale_reviews]=false \
+            --field required_pull_request_reviews[require_code_owner_reviews]=false \
             --field restrictions=null \
             --field allow_force_pushes=false \
             --field allow_deletions=false

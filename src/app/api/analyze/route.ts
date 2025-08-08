@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import OpenAI from 'openai';
+import { openai, getModel } from '@/lib/ai';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { canUseAnalysis, recordAnalysisUsage } from '@/lib/rateLimit';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// centralized client + model via lib/ai
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,123 +44,196 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    const prompt = `You are a technical recruiter tasked to evaluate how well a candidate's resume matches a job description.
+    // Upgraded grounded prompt + strict JSON schema (GPT-5 ready)
+    const SYSTEM_PROMPT = `
+You are an expert resume strategist and ATS optimization specialist.
 
-Inputs:
-1. Candidate's resume
-2. Job description
+Constraints:
+- Ground every statement in the provided Resume or Job Description (JD). Do not infer beyond the text.
+- Preserve numeric facts (metrics, dates, counts) verbatim.
+- Prefer JD vocabulary/synonyms only when meaning is identical.
+- Never fabricate skills, tools, titles, or timelines.
+- Return ONLY JSON matching the provided schema (no extra keys, no comments).
+- When uncertain, list it under "ambiguities" instead of guessing.
 
-Instructions:
-* Be fair and objective. Do not hallucinate information not present in the resume.
-* Use only the content available in both documents, resume and job description.
-* Do not speculate about potential fit beyond what's explicitly stated.
-* Penalize if the required key skills from the JD are missing in the resume.
-* Deduct points if any critical skills, years of experience, or industry/domain context are missing from the candidate resume.
+Scoring rubric (apply consistently to all scores):
+- 90–100: Direct, complete fit; strong quantified impact; skills/tools fully align with JD.
+- 80–89: Strong fit; minor gaps; mostly quantified; easy to fix with small changes.
+- 70–79: Partial fit; several gaps or weak quantification; needs targeted edits.
+- 60–69: Limited fit; missing key skills or weak evidence.
+- <60: Poor fit; role mismatch or major missing requirements.
 
-Task: Compare the resume to the job description and produce a structured output that includes the below details:
-* "Match Score": A percentage scoring from 0 to 100 representing the overall match between the candidate's resume and the job description.
-* "Score Breakdown": A breakdown of the match in key categories:
-   * "Skill Match": Match score for each skill: Primary, Secondary and Nice-to-have skills (0–100).
-      * Primary Skills: List all the primary skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. X%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-      * Secondary Skills: List all the secondary skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. Y%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-      * Nice-to-have Skills: List all nice-to-have skills in comma separated format.
-         * Significance: Percentage weights based on their importance compared to remaining skills.
-         * Match: Match Score, e.g. Z%.
-         * List all the skills that match the candidate's resume.
-         * Provide an exact line or bullet point from the resume that supports the match.
-   * "Prior Experience": Relevant prior years of experience (0–100). Provide an exact line or bullet point from the resume that supports the match.
-   * "Industry Knowledge": Evidence of familiarity with the specific industry mentioned in the job that matches the candidate resume, (e.g., finance, healthcare, e-commerce, etc) (0-100). Provide an exact line or bullet point from the resume that supports the match.
-   * "Domain Expertise": Depth of experience or specialization in the specific domain or technical field relevant to the role (e.g., backend systems, machine learning, supply chain, operations & strategy, marketing, sales, etc.) (0-100). Provide an exact line or bullet point from the resume that supports the match. 
-   * "Education Requirements": Alignment of academic background with job requirements (0–100). Provide an exact line or bullet point from the resume that supports the match.
-* "Missing Criteria": Important skills, experience, or qualifications listed in the job description that are not present in the candidate's resume. Provide an exact line or bullet point from the job description that supports the claim.
-* "Overall Match Score Verdict": A short textual summary (2–3 sentences) justifying the score, written in recruiter-friendly language.
-* "Overall Skill Comparison Table": Provide a list of skills by:
-* "Required Skill": Bullet point required skills from job description.
-* "Present in Resume": Bullet point skills that were present in the candidate's resume.
-* "Absent in Resume": Bullet point skills that were not present in the candidate's resume.
-* "Improvement Recommendations": Provide specific, actionable recommendations for the candidate to improve their match with the job description. Include:
-  * "Skills Development": Specific skills to learn or improve, with suggested learning resources or approaches.
-  * "Experience Enhancement": How to gain relevant experience, including project ideas, volunteer opportunities, or career moves.
-  * "Resume Optimization": Suggestions for better presenting existing experience and skills.
-  * "Education/Certifications": Recommended courses, certifications, or educational paths.
-  * "Industry Knowledge": How to build domain expertise in the specific industry.
-  * "Overall Strategy": A prioritized action plan with timeline suggestions.
+Evidence rules:
+- For any claim in analysis or optimized text, include an evidence span referencing the exact substring in Resume/JD with start/end character indices.
+- If a needed claim is absent, add it to "missing_requirements".
+- If the model thinks something might be true but can’t prove it, add it to "unsupported_claims".
+`.trim();
 
-Resume:
-${resumeText}
+    function buildKeywordMap(jd: string) {
+      const raw = Array.from(new Set(jd.toLowerCase().match(/\b([a-z][a-z0-9+\-#\. ]{2,})\b/g) || []));
+      const keep = raw.filter(t => t.includes(' ') || /[+#\.\-]/.test(t));
+      const obj: Record<string, string[]> = {};
+      keep.slice(0, 50).forEach(k => { obj[k] = [k]; });
+      return obj;
+    }
 
-Job Description:
-${jobDescription}
+    const resume_text = String(resumeText);
+    const job_description = String(jobDescription);
+    const jd_keyword_map = buildKeywordMap(job_description);
 
-Please provide your analysis in JSON format with the structure described above.`;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [
-        {
-          role: "system",
-          content: "You are a professional technical recruiter with expertise in evaluating candidate-job compatibility. Provide detailed, objective analysis in JSON format."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
+    const ANALYSIS_SCHEMA = {
+      type: 'object',
+      required: [
+        'overall','sections','scores','strengths','weaknesses','improvement_roadmap',
+        'market_competitiveness','missing_requirements','unsupported_claims','ambiguities'
       ],
-      temperature: 0.3,
-      max_tokens: 4000,
+      properties: {
+        overall: {
+          type: 'object',
+          required: ['candidacy_score','reasoning'],
+          properties: {
+            candidacy_score: { type: 'integer', minimum: 0, maximum: 100 },
+            reasoning: { type: 'string', maxLength: 700 }
+          }
+        },
+        sections: {
+          type: 'array',
+          items: {
+            type: 'object',
+            required: ['name','current_extract','optimized_text','section_score','improvements','jd_keywords_used','evidence'],
+            properties: {
+              name: { type: 'string', enum: ['Summary','Experience','Skills','Education','Projects'] },
+              current_extract: { type: 'string' },
+              optimized_text: { type: 'string' },
+              section_score: { type: 'integer', minimum: 0, maximum: 100 },
+              improvements: { type: 'array', items: { type: 'string' } },
+              jd_keywords_used: { type: 'array', items: { type: 'string' } },
+              evidence: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  required: ['source','start','end','quote'],
+                  properties: {
+                    source: { type: 'string', enum: ['resume','jd'] },
+                    start: { type: 'integer', minimum: 0 },
+                    end: { type: 'integer', minimum: 0 },
+                    quote: { type: 'string' }
+                  }
+                }
+              }
+            }
+          }
+        },
+        scores: {
+          type: 'object',
+          required: ['experience_alignment','skills_match','impact_quantification','seniority_signal','keyword_coverage'],
+          properties: {
+            experience_alignment: { type: 'integer', minimum: 0, maximum: 100 },
+            skills_match: { type: 'integer', minimum: 0, maximum: 100 },
+            impact_quantification: { type: 'integer', minimum: 0, maximum: 100 },
+            seniority_signal: { type: 'integer', minimum: 0, maximum: 100 },
+            keyword_coverage: { type: 'integer', minimum: 0, maximum: 100 }
+          }
+        },
+        strengths: { type: 'array', items: { type: 'string' } },
+        weaknesses: { type: 'array', items: { type: 'string' } },
+        improvement_roadmap: {
+          type: 'object', required: ['immediate','short_term','long_term'],
+          properties: {
+            immediate: { type: 'array', items: { type: 'string' } },
+            short_term: { type: 'array', items: { type: 'string' } },
+            long_term: { type: 'array', items: { type: 'string' } }
+          }
+        },
+        market_competitiveness: {
+          type: 'object', required: ['positioning','estimated_hiring_probability','benchmarking_notes'],
+          properties: {
+            positioning: { type: 'string' },
+            estimated_hiring_probability: { type: 'integer', minimum: 0, maximum: 100 },
+            benchmarking_notes: { type: 'string' }
+          }
+        },
+        missing_requirements: { type: 'array', items: { type: 'string' } },
+        unsupported_claims: { type: 'array', items: { type: 'string' } },
+        ambiguities: { type: 'array', items: { type: 'string' } }
+      }
+    } as const;
+
+    const userContent = {
+      instructions: `Analyze the candidate's Resume against the Job Description using the schema below.\n- Use only the provided inputs.\n- Optimize each section's text with JD-aligned keywords without adding new facts.\n- Populate evidence arrays with quotes and character offsets.\n- Apply the scoring rubric from the system message.\n- Output MUST be valid JSON per schema. No additional keys.`,
+      inputs: { resume_text, job_description, jd_keyword_map },
+      schema: ANALYSIS_SCHEMA
+    };
+
+    // Use standard chat completions API instead of responses API
+    const completion = await openai.chat.completions.create({
+      model: getModel(),
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: JSON.stringify(userContent) }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.2,
+      max_tokens: 2000
     });
 
-    const analysisText = completion.choices[0]?.message?.content;
-    
-    if (!analysisText) {
-      return NextResponse.json({ 
-        error: 'No analysis generated' 
-      }, { status: 500 });
-    }
-
-    // Try to parse the response as JSON
-    let analysis;
+    let analysis: unknown;
     try {
-      analysis = JSON.parse(analysisText);
-    } catch (parseError) {
-      // If JSON parsing fails, return the raw text
-      console.error('Failed to parse OpenAI response as JSON:', parseError);
-      return NextResponse.json({ 
-        error: 'Failed to parse analysis response',
-        rawResponse: analysisText
-      }, { status: 500 });
+      const analysisText = completion.choices[0]?.message?.content;
+      if (!analysisText) {
+        return NextResponse.json({ error: 'No analysis generated' }, { status: 500 });
+      }
+      
+      // Clean the response text - remove any markdown code blocks or extra text
+      let cleanedText = analysisText.trim();
+      
+      // Remove markdown code blocks if present
+      if (cleanedText.startsWith('```json')) {
+        cleanedText = cleanedText.substring(7);
+      }
+      if (cleanedText.startsWith('```')) {
+        cleanedText = cleanedText.substring(3);
+      }
+      if (cleanedText.endsWith('```')) {
+        cleanedText = cleanedText.substring(0, cleanedText.length - 3);
+      }
+      
+      cleanedText = cleanedText.trim();
+      
+      // Ensure it starts and ends with braces
+      if (!cleanedText.startsWith('{')) {
+        const braceStart = cleanedText.indexOf('{');
+        if (braceStart !== -1) {
+          cleanedText = cleanedText.substring(braceStart);
+        }
+      }
+      if (!cleanedText.endsWith('}')) {
+        const braceEnd = cleanedText.lastIndexOf('}');
+        if (braceEnd !== -1) {
+          cleanedText = cleanedText.substring(0, braceEnd + 1);
+        }
+      }
+      
+      analysis = JSON.parse(cleanedText);
+    } catch (err) {
+      console.error('Invalid JSON from model', err);
+      return NextResponse.json({ error: 'Invalid JSON from model' }, { status: 500 });
     }
 
-    // Record usage after successful analysis
+    if (!analysis || typeof analysis !== 'object') {
+      return NextResponse.json({ error: 'Invalid analysis structure received' }, { status: 500 });
+    }
+
     recordAnalysisUsage(session.user.email);
 
-    return NextResponse.json({
-      analysis,
-      timestamp: new Date().toISOString(),
-      rateLimit: {
-        remaining: rateLimitResult.remaining
-      }
-    });
+    return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
 
   } catch (error) {
     console.error('Analysis error:', error);
     
-    if (error instanceof Error) {
-      return NextResponse.json({ 
-        error: error.message 
-      }, { status: 500 });
-    }
-    
     return NextResponse.json({ 
-      error: 'Internal server error' 
+      error: 'An error occurred during analysis',
+      details: error instanceof Error ? error.message : 'Unknown error'
     }, { status: 500 });
   }
 } 
