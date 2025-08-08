@@ -198,7 +198,7 @@ Evidence rules:
 
     // Legacy prompt removed
     /*
-    const prompt = `You are an expert resume strategist and ATS optimization specialist with deep expertise in transforming resumes for maximum impact. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide detailed, actionable insights.
+    const prompt = ``;
 
 ANALYSIS REQUIREMENTS:
 
