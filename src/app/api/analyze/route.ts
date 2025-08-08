@@ -195,7 +195,6 @@ Evidence rules:
     recordAnalysisUsage(session.user.email);
 
     return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
-
     /*
     ANALYSIS REQUIREMENTS:
 
