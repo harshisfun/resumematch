@@ -196,8 +196,9 @@ Evidence rules:
 
     return NextResponse.json({ analysis, message: 'Analysis completed successfully' });
 
-    // Legacy prompt (unused) below intentionally removed.
-    /* const prompt = `You are an expert resume strategist and ATS optimization specialist with deep expertise in transforming resumes for maximum impact. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide detailed, actionable insights.
+    // Legacy prompt removed
+    /*
+    const prompt = `You are an expert resume strategist and ATS optimization specialist with deep expertise in transforming resumes for maximum impact. Your task is to conduct a comprehensive analysis of a candidate's resume against a specific job description and provide detailed, actionable insights.
 
 ANALYSIS REQUIREMENTS:
 
@@ -315,7 +316,8 @@ Provide the analysis in the following JSON structure:
       "Optimized Score": [7-10],
       "Analysis": "Detailed assessment of education relevance",
       "Improvements": "Specific recommendations for education section"
-    } */
+    }
+    */
   },
   "Score Breakdown": {
     "Years of Relevant Experience": {
